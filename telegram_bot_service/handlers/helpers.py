@@ -3,9 +3,9 @@
 from functools import wraps
 from typing import Any, Callable, Coroutine
 
-from telegram import Update
-from telegram.ext import ContextTypes
+from telegram import KeyboardButton, ReplyKeyboardMarkup, Update
 from telegram.constants import ChatAction
+from telegram.ext import ContextTypes
 
 
 def send_typing_action(
@@ -36,3 +36,21 @@ def log_update_data(
         return result
 
     return wrapper
+
+
+def get_reply_keyboard(
+    keys: list[KeyboardButton],
+    keys_per_row: int = 2,
+    resize: bool = True,
+    one_time: bool = True,
+    placeholder: str = "",
+) -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup(
+        [
+            [keys[i + j] for j in range(keys_per_row) if i + j < len(keys)]
+            for i in range(0, len(keys), keys_per_row)
+        ],
+        resize_keyboard=resize,
+        one_time_keyboard=one_time,
+        input_field_placeholder=placeholder,
+    )
