@@ -3,5 +3,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "start_menu"
+# main menu
+
+msgid "main_menu"
 msgstr "Hi! How can I help?"

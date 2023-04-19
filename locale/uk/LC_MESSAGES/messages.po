@@ -3,17 +3,47 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "start_menu"
+# main menu
+
+msgid "main_menu"
 msgstr "Привіт! Чим можу сьогодні допомогти?"
+
+msgid "main_menu_placeholder"
+msgstr "Оберіть варіант з меню"
 
 msgid "individual_training_plan_button"
 msgstr "Індивідуальний план тренувань 🏅"
+
+msgid "ready_made_plans_button"
+msgstr "Готові плани тренувань 💪"
+
+msgid "educational_plan_button"
+msgstr "Наукова робота 🧪"
+
+msgid "equipment_shop_button"
+msgstr "Спортивне спорядження 🛒"
+
+
+
+# equipment shop
+
+msgid "equipment_shop_description"
+msgstr "Купуйте найкраще спортивне спорядження тут"
+
+
+
+# individual plan survey
 
 msgid "individual_training_plan_description"
 msgstr "Зараз я допоможу тобі зробити всій власний план тренувань"
 
 msgid "start_button"
 msgstr "Погнали!"
+
+
+
+
+# individual plan sex
 
 msgid "sex_description"
 msgstr "Стать"
@@ -23,6 +53,10 @@ msgstr "Чоловік ♂️"
 
 msgid "sex_female_button"
 msgstr "Жінка ♀️"
+
+
+
+# individual plan age group
 
 msgid "age_group_description"
 msgstr "Вікова група"
@@ -39,6 +73,10 @@ msgstr "Від 30 до 40 років"
 msgid "age_group_above_40_button"
 msgstr "Від 40 років"
 
+
+
+# individual plan goal
+
 msgid "goal_description"
 msgstr "Мета"
 
@@ -51,6 +89,10 @@ msgstr "Зменшення маси"
 msgid "goal_improve_health_button"
 msgstr "Рельєф"
 
+
+
+# individual plan environment
+
 msgid "environment_description"
 msgstr "Середовище"
 
@@ -59,6 +101,10 @@ msgstr "Зал"
 
 msgid "environment_house_and_street_button"
 msgstr "Дім + вулиця"
+
+
+
+# individual plan level
 
 msgid "level_description"
 msgstr "Рівень"
@@ -72,6 +118,10 @@ msgstr "Середній"
 msgid "level_advanced_button"
 msgstr "Просунений"
 
+
+
+# individual plan frequency
+
 msgid "frequency_description"
 msgstr "Частота"
 
@@ -84,20 +134,16 @@ msgstr "Тричі на тиждень"
 msgid "frequency_four_button"
 msgstr "Чотири рази на тиждень"
 
+
+
+# payment
+
 msgid "payment_data"
 msgstr "Дай 2 гривні і скинь скріншот"
 
-msgid "ready_made_plans_button"
-msgstr "Готові плани тренувань 💪"
 
-msgid "educational_plan_button"
-msgstr "Наукова робота 🧪"
 
-msgid "equipment_shop_button"
-msgstr "Спортивне спорядження 🛒"
-
-msgid "equipment_shop_description"
-msgstr "Купуйте найкраще спортивне спорядження тут"
+# error messages
 
 msgid "invalid_input_text"
 msgstr "Такого варіанту не було..."
