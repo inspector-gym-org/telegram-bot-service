@@ -1,0 +1,103 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "start_menu"
+msgstr "Привіт! Чим можу сьогодні допомогти?"
+
+msgid "individual_training_plan_button"
+msgstr "Індивідуальний план тренувань 🏅"
+
+msgid "individual_training_plan_description"
+msgstr "Зараз я допоможу тобі зробити всій власний план тренувань"
+
+msgid "start_button"
+msgstr "Погнали!"
+
+msgid "sex_description"
+msgstr "Стать"
+
+msgid "sex_male_button"
+msgstr "Чоловік ♂️"
+
+msgid "sex_female_button"
+msgstr "Жінка ♀️"
+
+msgid "age_group_description"
+msgstr "Вікова група"
+
+msgid "age_group_under_20_button"
+msgstr "До 20 років"
+
+msgid "age_group_under_30_button"
+msgstr "Від 20 до 30 років"
+
+msgid "age_group_under_40_button"
+msgstr "Від 30 до 40 років"
+
+msgid "age_group_above_40_button"
+msgstr "Від 40 років"
+
+msgid "goal_description"
+msgstr "Мета"
+
+msgid "goal_muscle_gain_button"
+msgstr "Набір маси"
+
+msgid "goal_weight_loss_button"
+msgstr "Зменшення маси"
+
+msgid "goal_improve_health_button"
+msgstr "Рельєф"
+
+msgid "environment_description"
+msgstr "Середовище"
+
+msgid "environment_gym_button"
+msgstr "Зал"
+
+msgid "environment_house_and_street_button"
+msgstr "Дім + вулиця"
+
+msgid "level_description"
+msgstr "Рівень"
+
+msgid "level_beginner_button"
+msgstr "Початківець"
+
+msgid "level_middle_button"
+msgstr "Середній"
+
+msgid "level_advanced_button"
+msgstr "Просунений"
+
+msgid "frequency_description"
+msgstr "Частота"
+
+msgid "frequency_twice_button"
+msgstr "Двічі на тиждень"
+
+msgid "frequency_thrice_button"
+msgstr "Тричі на тиждень"
+
+msgid "frequency_four_button"
+msgstr "Чотири рази на тиждень"
+
+msgid "payment_data"
+msgstr "Дай 2 гривні і скинь скріншот"
+
+msgid "ready_made_plans_button"
+msgstr "Готові плани тренувань 💪"
+
+msgid "educational_plan_button"
+msgstr "Наукова робота 🧪"
+
+msgid "equipment_shop_button"
+msgstr "Спортивне спорядження 🛒"
+
+msgid "equipment_shop_description"
+msgstr "Купуйте найкраще спортивне спорядження тут"
+
+msgid "invalid_input_text"
+msgstr "Такого варіанту не було..."
