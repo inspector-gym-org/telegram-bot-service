@@ -20,8 +20,8 @@ async def send_equipment_shop_data(
             [
                 [
                     InlineKeyboardButton(
-                        translate("Наш магазин на olx.ua"),
-                        url="https://www.olx.ua/uk/list/user/LX9Mb/",
+                        text=translate("equipment_shop_url_button"),
+                        url=translate("equipment_shop_url"),
                     )
                 ],
             ]
