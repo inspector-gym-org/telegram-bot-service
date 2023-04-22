@@ -54,6 +54,7 @@ class TrainingPlan(BaseModel):
 
     title: str
     price: float
+    url: str
 
 
 def get_training_plans(
