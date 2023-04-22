@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     redis_port: int
 
     redis_language_db: int
+    redis_admin_notification_db: int
 
     user_service_url: str
     user_service_timeout: int
@@ -20,6 +21,8 @@ class Settings(BaseSettings):
 
     payment_service_url: str
     payment_service_timeout: int
+
+    bot_admin_chat_ids: list[int]
 
 
 settings = Settings()  # type: ignore[call-arg]

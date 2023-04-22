@@ -13,6 +13,7 @@ from telegram import (
 )
 from telegram.ext import ContextTypes
 
+from ..admin import notify_individual_plan
 from ..language import get_translations
 from ..payment import Item, ItemType, Payment, create_payment
 from ..training_plan import (
@@ -25,7 +26,6 @@ from ..training_plan import (
     get_existing_property_values,
     get_training_plans,
 )
-from ..user import User, authenticate_user
 from .constants import MenuState
 from .helpers import get_reply_keyboard, log_update_data, send_typing_action
 from .main_menu import get_main_menu
@@ -342,22 +342,27 @@ async def save_frequency(
 
 @log_update_data
 @send_typing_action
-@authenticate_user
 async def send_payment_data(
     update: Update,
     context: ContextTypes.DEFAULT_TYPE,
-    user: User,
     translate: Callable,
 ) -> MenuState:
     training_plan = get_training_plans(**context.user_data["filters"])[0]
-
-    item = Item(
-        item_type=ItemType.TRAINING_PLAN,
-        training_plan_id=training_plan.id,
-        price=training_plan.price,
+    payment = create_payment(
+        Payment(
+            user={"telegram_id": update.effective_user.id},
+            items=[
+                Item(
+                    price=training_plan.price,
+                    item_type=ItemType.TRAINING_PLAN,
+                    training_plan_id=training_plan.id,
+                )
+            ],
+        )
     )
-    payment = Payment(items=[item], user=user)
-    create_payment(payment)
+
+    context.user_data["payment"] = payment
+    context.user_data["training_plan"] = training_plan
 
     await update.effective_message.reply_text(
         translate("payment_training_plan_description").format(
@@ -382,6 +387,12 @@ async def save_payment_screenshot(
     if not update.message.photo:
         await update.effective_message.reply_text(translate("payment_not_screenshot"))
         return MenuState.PAYMENT_SCREENSHOT
+
+    await notify_individual_plan(
+        update.effective_message,
+        payment=context.user_data["payment"],
+        training_plan=context.user_data["training_plan"],
+    )
 
     await update.effective_message.reply_text(
         translate("payment_wait_confirmation"), reply_markup=get_main_menu(translate)

@@ -3,7 +3,7 @@ from uuid import UUID
 
 import requests
 from fastapi import status
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from .config import settings
 
@@ -24,15 +24,20 @@ class Item(BaseModel):
 
 
 class Payment(BaseModel):
+    id: str | None = Field(default=None, alias="_id")
+
     user: User
     items: list[Item]
+
+    class Config:
+        allow_population_by_field_name = True
 
 
 def create_payment(payment: Payment) -> Payment | None:
     response = requests.post(
         url=settings.payment_service_url + "/",
         timeout=settings.payment_service_timeout,
-        data=payment.json(),
+        data=payment.json(exclude={"id"}),
     )
 
     if response.status_code not in (status.HTTP_200_OK, status.HTTP_201_CREATED):
