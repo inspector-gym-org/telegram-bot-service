@@ -51,10 +51,11 @@ FilterEnum = Sex | Goal | Environment | Level | Frequency
 
 class TrainingPlan(BaseModel):
     id: UUID
+    url: str
 
     title: str
     price: float
-    url: str
+    content_url: str
 
 
 def get_training_plans(
