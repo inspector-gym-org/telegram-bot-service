@@ -31,6 +31,13 @@ from .helpers import get_reply_keyboard, log_update_data, send_typing_action
 from .main_menu import get_main_menu
 
 
+class AgeGroup(Enum):
+    UNDER_20 = 20
+    UNDER_30 = 30
+    UNDER_40 = 40
+    ABOVE_40 = 41
+
+
 def get_button_string_id_from_filter_enum(
     filter_enum: FilterEnum,
 ) -> str:
@@ -72,13 +79,6 @@ def verify_filter_reply_keyboard_choice(
             return property
 
     return None
-
-
-class AgeGroup(Enum):
-    UNDER_20 = 20
-    UNDER_30 = 30
-    UNDER_40 = 40
-    ABOVE_40 = 41
 
 
 @log_update_data

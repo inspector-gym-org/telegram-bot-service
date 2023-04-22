@@ -11,7 +11,7 @@ from .config import settings
 redis = Redis(
     host=settings.redis_host,
     port=settings.redis_port,
-    db=settings.redis_db,
+    db=settings.redis_language_db,
 )
 
 

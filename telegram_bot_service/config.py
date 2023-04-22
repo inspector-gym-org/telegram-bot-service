@@ -9,7 +9,8 @@ class Settings(BaseSettings):
 
     redis_host: str
     redis_port: int
-    redis_db: int
+
+    redis_language_db: int
 
     user_service_url: str
     user_service_timeout: int

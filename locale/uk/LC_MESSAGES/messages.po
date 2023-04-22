@@ -169,3 +169,6 @@ msgstr "Це не схоже на скріншот, друже..."
 
 msgid "invalid_input_text"
 msgstr "Такого варіанту не було..."
+
+msgid "coming_soon"
+msgstr "Скоро буде..."

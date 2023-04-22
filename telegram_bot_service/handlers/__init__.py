@@ -43,9 +43,15 @@ async def handle_menu_button(
         )
 
     elif response == translate("ready_made_plans_button"):
+        await update.effective_message.reply_text(  # type: ignore[union-attr]
+            translate("coming_soon")
+        )
         return MenuState.MAIN_MENU
 
     elif response == translate("educational_plan_button"):
+        await update.effective_message.reply_text(  # type: ignore[union-attr]
+            translate("coming_soon")
+        )
         return MenuState.MAIN_MENU
 
     elif response == translate("equipment_shop_button"):
