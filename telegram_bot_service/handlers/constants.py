@@ -11,4 +11,4 @@ class MenuState(Enum):
     ENVIRONMENT = auto()
     LEVEL = auto()
     FREQUENCY = auto()
-    PAYMENT_IMAGE = auto()
+    PAYMENT_SCREENSHOT = auto()

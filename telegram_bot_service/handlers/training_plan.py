@@ -14,6 +14,7 @@ from telegram import (
 from telegram.ext import ContextTypes
 
 from ..language import get_translations
+from ..payment import Item, ItemType, Payment, create_payment
 from ..training_plan import (
     Environment,
     FilterEnum,
@@ -22,9 +23,12 @@ from ..training_plan import (
     Level,
     Sex,
     get_existing_property_values,
+    get_training_plans,
 )
+from ..user import User, authenticate_user
 from .constants import MenuState
 from .helpers import get_reply_keyboard, log_update_data, send_typing_action
+from .main_menu import get_main_menu
 
 
 def get_button_string_id_from_filter_enum(
@@ -78,6 +82,20 @@ class AgeGroup(Enum):
 
 
 @log_update_data
+async def start_training_plan_survey(
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+) -> MenuState:
+    await update.effective_message.reply_text(
+        translate("individual_training_plan_description"),
+        reply_markup=get_reply_keyboard([KeyboardButton(translate("start_button"))]),
+    )
+
+    context.user_data["filters"] = {}  # type: ignore[index]
+    return MenuState.INDIVIDUAL_PLAN_START
+
+
+@log_update_data
+@send_typing_action
 @get_translations
 async def ask_sex(
     update: Update,
@@ -323,11 +341,50 @@ async def save_frequency(
 
 
 @log_update_data
+@send_typing_action
+@authenticate_user
 async def send_payment_data(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+    update: Update,
+    context: ContextTypes.DEFAULT_TYPE,
+    user: User,
+    translate: Callable,
 ) -> MenuState:
+    training_plan = get_training_plans(**context.user_data["filters"])[0]
+
+    item = Item(
+        item_type=ItemType.TRAINING_PLAN,
+        training_plan_id=training_plan.id,
+        price=training_plan.price,
+    )
+    payment = Payment(items=[item], user=user)
+    create_payment(payment)
+
     await update.effective_message.reply_text(
-        translate("payment_data"), reply_markup=ReplyKeyboardRemove()
+        translate("payment_training_plan_description").format(
+            price=training_plan.price
+        ),
+        reply_markup=ReplyKeyboardRemove(),
     )
 
-    return MenuState.PAYMENT_IMAGE
+    await update.effective_message.reply_text(
+        translate("payment_monobank_card_data"),
+    )
+
+    return MenuState.PAYMENT_SCREENSHOT
+
+
+@log_update_data
+@send_typing_action
+@get_translations
+async def save_payment_screenshot(
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+) -> MenuState:
+    if not update.message.photo:
+        await update.effective_message.reply_text(translate("payment_not_screenshot"))
+        return MenuState.PAYMENT_SCREENSHOT
+
+    await update.effective_message.reply_text(
+        translate("payment_wait_confirmation"), reply_markup=get_main_menu(translate)
+    )
+
+    return MenuState.MAIN_MENU

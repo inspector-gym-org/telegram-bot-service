@@ -1,8 +1,6 @@
-# mypy: disable-error-code="union-attr"
-
 from typing import Callable
 
-from telegram import KeyboardButton, Update
+from telegram import Update
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -13,10 +11,10 @@ from telegram.ext import (
 )
 
 from ..language import get_translations
-from ..user import User, authenticate_user
 from .constants import MenuState
 from .equipment_shop import send_equipment_shop_data
-from .helpers import get_reply_keyboard, log_update_data
+from .helpers import log_update_data
+from .main_menu import send_main_menu
 from .training_plan import (
     ask_sex,
     save_age_group,
@@ -24,39 +22,10 @@ from .training_plan import (
     save_frequency,
     save_goal,
     save_level,
+    save_payment_screenshot,
     save_sex,
+    start_training_plan_survey,
 )
-
-
-@log_update_data
-@authenticate_user
-@get_translations
-async def send_main_menu(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE,
-    user: User,
-    translate: Callable,
-) -> MenuState:
-    await update.effective_message.reply_text(
-        translate("main_menu"),
-        reply_markup=get_reply_keyboard(
-            [
-                KeyboardButton(
-                    translate("individual_training_plan_button"),
-                ),
-                KeyboardButton(
-                    translate("ready_made_plans_button"),
-                ),
-                KeyboardButton(translate("educational_plan_button")),
-                KeyboardButton(translate("equipment_shop_button")),
-            ],
-            placeholder=translate("main_menu_placeholder"),
-            one_time=False,
-            keys_per_row=1,
-        ),
-    )
-
-    return MenuState.MAIN_MENU
 
 
 @log_update_data
@@ -85,19 +54,6 @@ async def handle_menu_button(
         )
 
     return MenuState.MAIN_MENU
-
-
-@log_update_data
-async def start_training_plan_survey(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
-) -> MenuState:
-    await update.effective_message.reply_text(
-        translate("individual_training_plan_description"),
-        reply_markup=get_reply_keyboard([KeyboardButton(translate("start_button"))]),
-    )
-
-    context.user_data["filters"] = {}  # type: ignore[index]
-    return MenuState.INDIVIDUAL_PLAN_START
 
 
 def register_handlers(telegram_application: Application) -> None:
@@ -135,7 +91,9 @@ def register_handlers(telegram_application: Application) -> None:
                 MenuState.FREQUENCY: [
                     MessageHandler(filters.TEXT & (~filters.COMMAND), save_frequency)
                 ],
-                # MenuState.PAYMENT_IMAGE: [MessageHandler(filters)],
+                MenuState.PAYMENT_SCREENSHOT: [
+                    MessageHandler(filters.ALL, save_payment_screenshot),
+                ],
             },
             fallbacks=[],
         ),
