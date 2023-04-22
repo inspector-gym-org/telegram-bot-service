@@ -111,7 +111,7 @@ async def save_sex(
         await update.effective_message.reply_text(translate("invalid_input_text"))
         return MenuState.SEX
 
-    return await ask_age_group(update, context, translate)
+    return await ask_age_group(update=update, context=context, translate=translate)
 
 
 @log_update_data
@@ -159,7 +159,7 @@ async def save_age_group(
         await update.effective_message.reply_text(translate("invalid_input_text"))
         return MenuState.AGE_GROUP
 
-    return await ask_goal(update, context, translate)
+    return await ask_goal(update=update, context=context, translate=translate)
 
 
 @log_update_data
@@ -193,7 +193,7 @@ async def save_goal(
         await update.effective_message.reply_text(translate("invalid_input_text"))
         return MenuState.GOAL
 
-    return await ask_environment(update, context, translate)
+    return await ask_environment(update=update, context=context, translate=translate)
 
 
 @log_update_data
@@ -245,7 +245,7 @@ async def save_environment(
             ),
         )
 
-    return await ask_level(update, context, translate)
+    return await ask_level(update=update, context=context, translate=translate)
 
 
 @log_update_data
@@ -279,7 +279,7 @@ async def save_level(
         await update.effective_message.reply_text(translate("invalid_input_text"))
         return MenuState.LEVEL
 
-    return await ask_frequency(update, context, translate)
+    return await ask_frequency(update=update, context=context, translate=translate)
 
 
 @log_update_data
@@ -293,7 +293,9 @@ async def ask_frequency(
 
     if len(available_values) == 1:
         context.user_data["filters"]["frequency"] = available_values[0]
-        return await send_payment_data(update, context, translate)
+        return await send_payment_data(
+            update=update, context=context, translate=translate
+        )
 
     await update.effective_message.reply_text(
         translate("frequency_description"),
@@ -317,7 +319,7 @@ async def save_frequency(
         await update.effective_message.reply_text(translate("invalid_input_text"))
         return MenuState.FREQUENCY
 
-    return await send_payment_data(update, context, translate)
+    return await send_payment_data(update=update, context=context, translate=translate)
 
 
 @log_update_data

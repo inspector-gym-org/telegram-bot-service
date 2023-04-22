@@ -36,6 +36,6 @@ def get_translations(
         )
 
         kwargs["translate"] = translation.gettext
-        return wrapped(update, *args, **kwargs)
+        return wrapped(update=update, *args, **kwargs)
 
     return wrapper

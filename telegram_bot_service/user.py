@@ -45,6 +45,7 @@ def authenticate_user(
         )
 
         kwargs["user"] = create_user(user)
-        return wrapped(update, *args, **kwargs)
+
+        return wrapped(update=update, *args, **kwargs)
 
     return wrapper

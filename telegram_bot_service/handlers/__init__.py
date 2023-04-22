@@ -66,10 +66,12 @@ async def handle_menu_button(
     context: ContextTypes.DEFAULT_TYPE,
     translate: Callable,
 ) -> MenuState:
-    response = update.effective_message.text
+    response = update.effective_message.text  # type: ignore[union-attr]
 
     if response == translate("individual_training_plan_button"):
-        return await start_training_plan_survey(update, context, translate)
+        return await start_training_plan_survey(
+            update=update, context=context, translate=translate
+        )
 
     elif response == translate("ready_made_plans_button"):
         return MenuState.MAIN_MENU
@@ -78,7 +80,9 @@ async def handle_menu_button(
         return MenuState.MAIN_MENU
 
     elif response == translate("equipment_shop_button"):
-        return await send_equipment_shop_data(update, context, translate)
+        return await send_equipment_shop_data(
+            update=update, context=context, translate=translate
+        )
 
     return MenuState.MAIN_MENU
 
