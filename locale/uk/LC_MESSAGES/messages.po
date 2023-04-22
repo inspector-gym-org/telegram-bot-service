@@ -149,12 +149,20 @@ msgstr "Чотири рази на тиждень"
 
 # payment
 
-msgid "payment_data"
+msgid "payment_training_plan_description"
 msgstr ""
-"Твій план тренувань коштує всього *{price} грн*\n"
+"Твій план тренувань коштує всього *{price:.2f} грн*"
+
+msgid "payment_monobank_card_data"
+msgstr ""
 "Номер картки: `5375 4115 0685 5415`\n"
 "Надішли мені скріншот по здійсненню переказу"
 
+msgid "payment_wait_confirmation"
+msgstr "Супер! Зачекай, доки адмін підтвердить оплату"
+
+msgid "payment_not_screenshot"
+msgstr "Це не схоже на скріншот, друже..."
 
 
 # error messages

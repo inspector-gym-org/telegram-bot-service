@@ -55,12 +55,6 @@ class TrainingPlan(BaseModel):
     title: str
     price: float
 
-    sex: Sex
-    goal: Goal
-    level: Level
-    frequency: Frequency
-    environment: Environment
-
 
 def get_training_plans(
     sex: Sex | None = None,
@@ -70,8 +64,8 @@ def get_training_plans(
     environment: Environment | None = None,
 ) -> list[TrainingPlan]:
     response = requests.get(
-        url=settings.training_plan_url + "/",
-        timeout=settings.training_plan_timeout,
+        url=settings.training_plan_service_url + "/",
+        timeout=settings.training_plan_service_timeout,
         params=jsonable_encoder(
             {
                 "sex": sex,
@@ -95,8 +89,8 @@ def get_existing_property_values(
     environment: Environment | None = None,
 ) -> list[FilterEnum]:
     response = requests.get(
-        url=settings.training_plan_url + "/existing-property-values/",
-        timeout=settings.training_plan_timeout,
+        url=settings.training_plan_service_url + "/existing-property-values/",
+        timeout=settings.training_plan_service_timeout,
         params=jsonable_encoder(
             {
                 "property": filter_enum.__name__.lower(),

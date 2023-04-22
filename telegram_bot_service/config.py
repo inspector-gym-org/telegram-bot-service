@@ -14,8 +14,11 @@ class Settings(BaseSettings):
     user_service_url: str
     user_service_timeout: int
 
-    training_plan_url: str
-    training_plan_timeout: int
+    training_plan_service_url: str
+    training_plan_service_timeout: int
+
+    payment_service_url: str
+    payment_service_timeout: int
 
 
 settings = Settings()  # type: ignore[call-arg]
