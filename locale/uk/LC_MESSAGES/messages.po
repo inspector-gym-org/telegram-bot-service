@@ -3,6 +3,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+
+
 # main menu
 
 msgid "main_menu"
@@ -45,7 +47,6 @@ msgstr "Зараз я допоможу тобі зробити всій влас
 
 msgid "start_button"
 msgstr "Погнали!"
-
 
 
 
@@ -110,8 +111,8 @@ msgstr "Дім + вулиця"
 
 msgid "environment_equipment_recommendation"
 msgstr ""
-"Для цього середовища необхідне спортивне спорядження\n"
-"Купуй спорядження у нашому магазині"
+"Для цього середовища необхідне спортивне спорядження. "
+"Купуй найкраще спорядження у нашому магазині!"
 
 
 
@@ -165,10 +166,11 @@ msgid "payment_not_screenshot"
 msgstr "Це не схоже на скріншот, друже..."
 
 
+
 # error messages
 
 msgid "invalid_input_text"
 msgstr "Такого варіанту не було..."
 
 msgid "coming_soon"
-msgstr "Скоро буде..."
+msgstr "Незабаром цей розділ стане доступним..."
