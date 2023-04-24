@@ -14,7 +14,6 @@ from telegram import (
 from telegram.ext import ContextTypes
 
 from ..admin import notify_individual_plan
-from ..language import get_translations
 from ..payment import Item, ItemType, Payment, create_payment
 from ..training_plan import (
     Environment,
@@ -27,7 +26,12 @@ from ..training_plan import (
     get_training_plans,
 )
 from .constants import MenuState
-from .helpers import get_reply_keyboard, log_update_data, send_typing_action
+from .helpers import (
+    get_reply_keyboard,
+    get_translations,
+    log_update_data,
+    send_typing_action,
+)
 from .main_menu import get_main_menu
 
 

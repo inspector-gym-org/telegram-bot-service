@@ -11,11 +11,10 @@ from telegram.ext import (
     filters,
 )
 
-from ..language import get_translations
 from .admin import handle_dummy_inline_button, update_payment_button
 from .constants import MenuState
 from .equipment_shop import send_equipment_shop_data
-from .helpers import log_update_data
+from .helpers import get_translations, log_update_data
 from .main_menu import send_main_menu
 from .training_plan import (
     ask_sex,

@@ -3,10 +3,9 @@ from typing import Callable
 from telegram import KeyboardButton, ReplyKeyboardMarkup, Update
 from telegram.ext import ContextTypes
 
-from ..language import get_translations
 from ..user import User, authenticate_user
 from .constants import MenuState
-from .helpers import get_reply_keyboard, log_update_data
+from .helpers import get_reply_keyboard, get_translations, log_update_data
 
 
 def get_main_menu(translate: Callable) -> ReplyKeyboardMarkup:

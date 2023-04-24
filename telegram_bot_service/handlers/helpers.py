@@ -7,6 +7,8 @@ from telegram import KeyboardButton, ReplyKeyboardMarkup, Update
 from telegram.constants import ChatAction
 from telegram.ext import ContextTypes
 
+from ..language import get_user_translation_function
+
 
 def send_typing_action(
     wrapped: Callable[..., Any]
@@ -55,3 +57,17 @@ def get_reply_keyboard(
         one_time_keyboard=one_time,
         input_field_placeholder=placeholder,
     )
+
+
+def get_translations(
+    wrapped: Callable[..., Any],
+) -> Callable[..., Coroutine[Any, Any, Any]]:
+    @wraps(wrapped)
+    def wrapper(update: Update, *args, **kwargs) -> Coroutine[Any, Any, Any]:
+        kwargs["translate"] = get_user_translation_function(
+            update.effective_user.id,  # type: ignore[union-attr]
+        )
+
+        return wrapped(update=update, *args, **kwargs)
+
+    return wrapper
