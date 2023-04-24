@@ -8,7 +8,7 @@ from telegram import Update
 
 from .config import settings
 
-redis = Redis(
+language_redis = Redis(
     host=settings.redis_host,
     port=settings.redis_port,
     db=settings.redis_language_db,
@@ -28,7 +28,7 @@ def get_translations(
         language = Language.UKRAINIAN
 
         telegram_id = str(update.effective_user.id)  # type: ignore[union-attr]
-        if redis_value := redis.get(telegram_id):
+        if redis_value := language_redis.get(telegram_id):
             language = Language(redis_value)
 
         translation = gettext.translation(

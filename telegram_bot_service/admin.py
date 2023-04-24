@@ -1,11 +1,14 @@
+import json
+from typing import cast
+
 from redis import Redis
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Message, User
 
 from .config import settings
-from .payment import Payment
+from .payment import Payment, PaymentStatus, update_payment
 from .training_plan import TrainingPlan
 
-redis = Redis(
+notification_redis = Redis(
     host=settings.redis_host,
     port=settings.redis_port,
     db=settings.redis_admin_notification_db,
@@ -15,25 +18,23 @@ redis = Redis(
 async def notify_individual_plan(
     media_message: Message, payment: Payment, training_plan: TrainingPlan
 ) -> None:
-    user = media_message.from_user
+    user = cast(User, media_message.from_user)
 
     caption = (
-        "Оплата індивідуального плану:\n"
-        f"План: {training_plan.url}\n"
-        f"Сума: *{training_plan.price} грн*\n"
-        f"Користувач: @{user.username}"
-        if user and user.username
-        else "Користувач не має нікнейму"
+        "*Оплата індивідуального плану*\n"
+        f"*Сума:* _{training_plan.price:.2f} грн_\n"
+        f"*План:* [Notion-сторінка]({training_plan.url})\n"
+        f"*Користувач:* [Telegram-профіль](tg://user?id={user.id})"
     )
 
     reply_markup = InlineKeyboardMarkup(
         [
             [
                 InlineKeyboardButton(
-                    "OK", callback_data=f"accept_payment;{payment.id}"
+                    "OK", callback_data=f"update_payment;accept;{payment.id}"
                 ),
                 InlineKeyboardButton(
-                    "NOT OK", callback_data=f"reject_payment;{payment.id}"
+                    "не OK", callback_data=f"update_payment;reject;{payment.id}"
                 ),
             ]
         ]
@@ -45,4 +46,11 @@ async def notify_individual_plan(
         message = await media_message.copy(
             chat_id=admin_chat_id, caption=caption, reply_markup=reply_markup
         )
-        message_ids.append(message.message_id)
+        message_ids.append((admin_chat_id, message.message_id))
+
+    notification_redis.set(str(payment.id), json.dumps(message_ids))
+
+    update_payment(
+        payment_id=payment.id,  # type: ignore
+        new_status=PaymentStatus.PROCESSING,
+    )
