@@ -160,10 +160,24 @@ msgstr ""
 "Надішли мені скріншот по здійсненню переказу"
 
 msgid "payment_wait_confirmation"
-msgstr "Супер! Зачекай, доки адмін підтвердить оплату"
+msgstr "Супер! Зачекай, доки інспектор підтвердить оплату"
 
 msgid "payment_not_screenshot"
 msgstr "Це не схоже на скріншот, друже..."
+
+
+
+# user notification
+
+msgid "training_plan_payment_accepted"
+msgstr ""
+"Твоя оплата успішно підтверджена!\n"
+"Переходь за посиланням, щоб переглянути свій план тренувань"
+
+msgid "training_plan_payment_rejected"
+msgstr ""
+"Інспектор відхилив оплату і скоро "
+"зв'яжеться з тобою для вирішення проблеми"
 
 
 
