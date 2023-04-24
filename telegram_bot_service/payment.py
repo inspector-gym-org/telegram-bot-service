@@ -1,3 +1,4 @@
+import json
 from enum import Enum
 from uuid import UUID
 
@@ -23,6 +24,14 @@ class Item(BaseModel):
     training_plan_id: UUID | None
 
 
+class PaymentStatus(Enum):
+    ACCEPTED = 1
+    REJECTED = 2
+
+    PROCESSING = 3
+    CREATED = 4
+
+
 class Payment(BaseModel):
     id: str | None = Field(default=None, alias="_id")
 
@@ -41,6 +50,19 @@ def create_payment(payment: Payment) -> Payment | None:
     )
 
     if response.status_code not in (status.HTTP_200_OK, status.HTTP_201_CREATED):
+        return None
+
+    return Payment(**response.json())
+
+
+def update_payment(payment_id: str, new_status: PaymentStatus) -> Payment | None:
+    response = requests.put(
+        url=settings.payment_service_url + f"/{payment_id}",
+        timeout=settings.payment_service_timeout,
+        data=json.dumps({"status": new_status.value}),
+    )
+
+    if response.status_code != status.HTTP_200_OK:
         return None
 
     return Payment(**response.json())
