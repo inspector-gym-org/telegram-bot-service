@@ -3,6 +3,7 @@ from typing import Callable
 from telegram import Update
 from telegram.ext import (
     Application,
+    CallbackQueryHandler,
     CommandHandler,
     ContextTypes,
     ConversationHandler,
@@ -11,6 +12,7 @@ from telegram.ext import (
 )
 
 from ..language import get_translations
+from .admin import handle_dummy_inline_button, update_payment_button
 from .constants import MenuState
 from .equipment_shop import send_equipment_shop_data
 from .helpers import log_update_data
@@ -103,4 +105,12 @@ def register_handlers(telegram_application: Application) -> None:
             },
             fallbacks=[],
         ),
+    )
+
+    telegram_application.add_handler(
+        CallbackQueryHandler(update_payment_button, pattern="^update_payment")
+    )
+
+    telegram_application.add_handler(
+        CallbackQueryHandler(handle_dummy_inline_button, pattern="^dummy")
     )
