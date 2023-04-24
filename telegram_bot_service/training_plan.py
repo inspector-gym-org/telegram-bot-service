@@ -82,6 +82,15 @@ def get_training_plans(
     return [TrainingPlan(**plan) for plan in response.json()]
 
 
+def get_training_plan(training_plan_id: UUID) -> TrainingPlan:
+    response = requests.get(
+        url=settings.training_plan_service_url + f"/{training_plan_id.hex}",
+        timeout=settings.training_plan_service_timeout,
+    )
+
+    return TrainingPlan(**response.json())
+
+
 def get_existing_property_values(
     filter_enum: type[FilterEnum],
     sex: Sex | None = None,
