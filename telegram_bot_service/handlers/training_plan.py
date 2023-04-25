@@ -32,7 +32,7 @@ from .helpers import (
     log_update_data,
     send_typing_action,
 )
-from .main_menu import get_main_menu
+from .main_menu import get_main_menu, send_main_menu
 
 
 class AgeGroup(Enum):
@@ -68,6 +68,7 @@ def get_filter_reply_keyboard(
             for property in filter_enum_type
             if property in available_values
         ],
+        additional_row=[KeyboardButton(translate("previous_question"))],
     )
 
 
@@ -106,6 +107,8 @@ async def ask_sex(
     context: ContextTypes.DEFAULT_TYPE,
     translate: Callable,
 ) -> MenuState:
+    context.user_data["filters"]["sex"] = None
+
     available_values = get_existing_property_values(
         filter_enum=Sex, **context.user_data["filters"]
     )
@@ -124,9 +127,12 @@ async def ask_sex(
 async def save_sex(
     update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
 ) -> MenuState:
-    if result := verify_filter_reply_keyboard_choice(
-        translate, Sex, update.effective_message.text
-    ):
+    choice = update.effective_message.text
+
+    if choice == translate("previous_question"):
+        return await send_main_menu(update=update, context=context)
+
+    if result := verify_filter_reply_keyboard_choice(translate, Sex, choice):
         context.user_data["filters"]["sex"] = result
 
     else:
@@ -141,6 +147,8 @@ async def save_sex(
 async def ask_age_group(
     update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
 ) -> MenuState:
+    context.user_data["age_group"] = None
+
     await update.effective_message.reply_text(
         translate("age_group_description"),
         reply_markup=ReplyKeyboardMarkup(
@@ -149,6 +157,7 @@ async def ask_age_group(
                 [KeyboardButton(translate("age_group_under_30_button"))],
                 [KeyboardButton(translate("age_group_under_40_button"))],
                 [KeyboardButton(translate("age_group_above_40_button"))],
+                [KeyboardButton(translate("previous_question"))],
             ],
             one_time_keyboard=True,
             resize_keyboard=True,
@@ -163,18 +172,21 @@ async def ask_age_group(
 async def save_age_group(
     update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
 ) -> MenuState:
-    response = update.effective_message.text
+    choice = update.effective_message.text
 
-    if response == translate("age_group_under_20_button"):
+    if choice == translate("previous_question"):
+        return await ask_sex(update=update, context=context)
+
+    if choice == translate("age_group_under_20_button"):
         context.user_data["age_group"] = AgeGroup.UNDER_20
 
-    elif response == translate("age_group_under_30_button"):
+    elif choice == translate("age_group_under_30_button"):
         context.user_data["age_group"] = AgeGroup.UNDER_30
 
-    elif response == translate("age_group_under_40_button"):
+    elif choice == translate("age_group_under_40_button"):
         context.user_data["age_group"] = AgeGroup.UNDER_40
 
-    elif response == translate("age_group_above_40_button"):
+    elif choice == translate("age_group_above_40_button"):
         context.user_data["age_group"] = AgeGroup.ABOVE_40
 
     else:
@@ -189,6 +201,8 @@ async def save_age_group(
 async def ask_goal(
     update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
 ) -> MenuState:
+    context.user_data["filters"]["goal"] = None
+
     available_values = get_existing_property_values(
         filter_enum=Goal, **context.user_data["filters"]
     )
@@ -206,9 +220,12 @@ async def ask_goal(
 async def save_goal(
     update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
 ) -> MenuState:
-    if result := verify_filter_reply_keyboard_choice(
-        translate, Goal, update.effective_message.text
-    ):
+    choice = update.effective_message.text
+
+    if choice == translate("previous_question"):
+        return await ask_age_group(update=update, context=context, translate=translate)
+
+    if result := verify_filter_reply_keyboard_choice(translate, Goal, choice):
         context.user_data["filters"]["goal"] = result
 
     else:
@@ -223,6 +240,8 @@ async def save_goal(
 async def ask_environment(
     update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
 ) -> MenuState:
+    context.user_data["filters"]["environment"] = None
+
     available_values = get_existing_property_values(
         filter_enum=Environment, **context.user_data["filters"]
     )
@@ -243,9 +262,12 @@ async def ask_environment(
 async def save_environment(
     update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
 ) -> MenuState:
-    if result := verify_filter_reply_keyboard_choice(
-        translate, Environment, update.effective_message.text
-    ):
+    choice = update.effective_message.text
+
+    if choice == translate("previous_question"):
+        return await ask_goal(update=update, context=context, translate=translate)
+
+    if result := verify_filter_reply_keyboard_choice(translate, Environment, choice):
         context.user_data["filters"]["environment"] = result
 
     else:
@@ -275,6 +297,8 @@ async def save_environment(
 async def ask_level(
     update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
 ) -> MenuState:
+    context.user_data["filters"]["level"] = None
+
     available_values = get_existing_property_values(
         filter_enum=Level, **context.user_data["filters"]
     )
@@ -292,9 +316,14 @@ async def ask_level(
 async def save_level(
     update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
 ) -> MenuState:
-    if result := verify_filter_reply_keyboard_choice(
-        translate, Level, update.effective_message.text
-    ):
+    choice = update.effective_message.text
+
+    if choice == translate("previous_question"):
+        return await ask_environment(
+            update=update, context=context, translate=translate
+        )
+
+    if result := verify_filter_reply_keyboard_choice(translate, Level, choice):
         context.user_data["filters"]["level"] = result
 
     else:
@@ -309,6 +338,8 @@ async def save_level(
 async def ask_frequency(
     update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
 ) -> MenuState:
+    context.user_data["filters"]["frequency"] = None
+
     available_values = get_existing_property_values(
         filter_enum=Frequency, **context.user_data["filters"]
     )
@@ -332,9 +363,12 @@ async def ask_frequency(
 async def save_frequency(
     update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
 ) -> MenuState:
-    if result := verify_filter_reply_keyboard_choice(
-        translate, Frequency, update.effective_message.text
-    ):
+    choice = update.effective_message.text
+
+    if choice == translate("previous_question"):
+        return await ask_level(update=update, context=context, translate=translate)
+
+    if result := verify_filter_reply_keyboard_choice(translate, Frequency, choice):
         context.user_data["filters"]["frequency"] = result
 
     else:

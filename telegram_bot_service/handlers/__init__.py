@@ -102,7 +102,9 @@ def register_handlers(telegram_application: Application) -> None:
                     MessageHandler(filters.ALL, save_payment_screenshot),
                 ],
             },
-            fallbacks=[],
+            fallbacks=[
+                CommandHandler("start", send_main_menu),
+            ],
         ),
     )
 

@@ -50,6 +50,9 @@ msgstr ""
 msgid "start_button"
 msgstr "Погнали! 🏎️"
 
+msgid "previous_question"
+msgstr "🔙 Назад"
+
 
 
 # individual plan sex

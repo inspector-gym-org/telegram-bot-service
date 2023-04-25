@@ -51,12 +51,18 @@ def get_reply_keyboard(
     resize: bool = True,
     one_time: bool = True,
     placeholder: str = "",
+    additional_row: list[KeyboardButton] | None = None,
 ) -> ReplyKeyboardMarkup:
+    keyboard = [
+        [keys[i + j] for j in range(keys_per_row) if i + j < len(keys)]
+        for i in range(0, len(keys), keys_per_row)
+    ]
+
+    if additional_row:
+        keyboard.append(additional_row)
+
     return ReplyKeyboardMarkup(
-        [
-            [keys[i + j] for j in range(keys_per_row) if i + j < len(keys)]
-            for i in range(0, len(keys), keys_per_row)
-        ],
+        keyboard=keyboard,
         resize_keyboard=resize,
         one_time_keyboard=one_time,
         input_field_placeholder=placeholder,
