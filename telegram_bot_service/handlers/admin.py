@@ -42,7 +42,14 @@ async def update_payment_button(
             chat_id=payment.user.telegram_id,
             text=translate("training_plan_payment_accepted"),
             reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton("Посилання", url=training_plan.content_url)]]
+                [
+                    [
+                        InlineKeyboardButton(
+                            translate("training_plan_url"),
+                            url=training_plan.content_url,
+                        )
+                    ]
+                ]
             ),
         )
 
