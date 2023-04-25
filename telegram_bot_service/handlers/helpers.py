@@ -9,17 +9,9 @@ from telegram.ext import ContextTypes
 
 from ..language import get_user_translation_function
 
+from logging import getLogger
 
-def send_typing_action(
-    wrapped: Callable[..., Any]
-) -> Callable[..., Coroutine[Any, Any, Any]]:
-    @wraps(wrapped)
-    async def wrapper(update: Update, *args, **kwargs) -> Coroutine[Any, Any, Any]:
-        await update.effective_message.reply_chat_action(ChatAction.TYPING)
-
-        return await wrapped(update=update, *args, **kwargs)
-
-    return wrapper
+logger = getLogger("service")
 
 
 def log_update_data(
@@ -29,14 +21,26 @@ def log_update_data(
     async def wrapper(
         update: Update, context: ContextTypes.DEFAULT_TYPE, *args, **kwargs
     ) -> Coroutine[Any, Any, Any]:
-        print(f"{wrapped.__name__} update: {update}")
-        print(f"{wrapped.__name__} user_data: {context.user_data}")
+        logger.debug(f"{wrapped.__name__} update: {update}")
+        logger.debug(f"{wrapped.__name__} user_data: {context.user_data}")
 
         result = await wrapped(update=update, context=context, *args, **kwargs)
 
-        print(f"{wrapped.__name__} output: {result}")
+        logger.debug(f"{wrapped.__name__} output: {result}")
 
         return result
+
+    return wrapper
+
+
+def send_typing_action(
+    wrapped: Callable[..., Any]
+) -> Callable[..., Coroutine[Any, Any, Any]]:
+    @wraps(wrapped)
+    async def wrapper(update: Update, *args, **kwargs) -> Coroutine[Any, Any, Any]:
+        await update.effective_message.reply_chat_action(ChatAction.TYPING)
+
+        return await wrapped(update=update, *args, **kwargs)
 
     return wrapper
 

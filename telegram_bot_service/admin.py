@@ -1,12 +1,16 @@
 import json
+from logging import getLogger
 from typing import cast
 
 from redis import Redis
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Message, User
+from telegram.error import Forbidden
 
 from .config import settings
 from .payment import Payment, PaymentStatus, update_payment
 from .training_plan import TrainingPlan
+
+logger = getLogger("service")
 
 notification_redis = Redis(
     host=settings.redis_host,
@@ -43,10 +47,16 @@ async def notify_individual_plan(
     message_ids = []
 
     for admin_chat_id in settings.bot_admin_chat_ids:
-        message = await media_message.copy(
-            chat_id=admin_chat_id, caption=caption, reply_markup=reply_markup
-        )
-        message_ids.append((admin_chat_id, message.message_id))
+        try:
+            message = await media_message.copy(
+                chat_id=admin_chat_id, caption=caption, reply_markup=reply_markup
+            )
+            message_ids.append((admin_chat_id, message.message_id))
+
+            logger.debug(f"Sent payment {payment.id} notification to {admin_chat_id}")
+
+        except Forbidden:
+            logger.error(f"Unable to send notification to {admin_chat_id}")
 
     notification_redis.set(str(payment.id), json.dumps(message_ids))
 
