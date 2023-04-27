@@ -2,8 +2,6 @@ from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
-    app_root_path: str
-
     telegram_bot_token: str
     telegram_webhook_token: str
 
