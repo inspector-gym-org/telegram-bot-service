@@ -7,6 +7,7 @@ class MenuState(Enum):
     INDIVIDUAL_PLAN_START = auto()
     SEX = auto()
     AGE_GROUP = auto()
+    HEALTH_CONDITION = auto()
     GOAL = auto()
     ENVIRONMENT = auto()
     LEVEL = auto()

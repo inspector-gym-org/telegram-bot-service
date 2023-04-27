@@ -18,6 +18,7 @@ from .helpers import get_translations, log_update_data
 from .main_menu import send_main_menu
 from .training_plan import (
     ask_sex,
+    handle_health_condition,
     save_age_group,
     save_environment,
     save_frequency,
@@ -85,6 +86,11 @@ def register_handlers(telegram_application: Application) -> None:
                 ],
                 MenuState.AGE_GROUP: [
                     MessageHandler(filters.TEXT & (~filters.COMMAND), save_age_group)
+                ],
+                MenuState.HEALTH_CONDITION: [
+                    MessageHandler(
+                        filters.TEXT & (~filters.COMMAND), handle_health_condition
+                    )
                 ],
                 MenuState.GOAL: [
                     MessageHandler(filters.TEXT & (~filters.COMMAND), save_goal)
