@@ -29,7 +29,7 @@ class TelegramWebhook(BaseModel):
     chat_join_request: dict | None
 
 
-router = APIRouter(prefix="/telegram", tags=["telegram", "webhook"])
+router = APIRouter(tags=["telegram", "webhook"])
 
 
 @router.post("/")
