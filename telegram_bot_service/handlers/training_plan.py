@@ -151,16 +151,15 @@ async def ask_age_group(
 
     await update.effective_message.reply_text(
         translate("age_group_description"),
-        reply_markup=ReplyKeyboardMarkup(
+        reply_markup=get_reply_keyboard(
             [
-                [KeyboardButton(translate("age_group_under_20_button"))],
-                [KeyboardButton(translate("age_group_under_30_button"))],
-                [KeyboardButton(translate("age_group_under_40_button"))],
-                [KeyboardButton(translate("age_group_above_40_button"))],
-                [KeyboardButton(translate("previous_question"))],
+                KeyboardButton(translate("age_group_under_20_button")),
+                KeyboardButton(translate("age_group_under_30_button")),
+                KeyboardButton(translate("age_group_under_40_button")),
+                KeyboardButton(translate("age_group_above_40_button")),
             ],
-            one_time_keyboard=True,
-            resize_keyboard=True,
+            additional_row=[KeyboardButton(translate("previous_question"))],
+            keys_per_row=1,
         ),
     )
 
@@ -193,6 +192,56 @@ async def save_age_group(
         await update.effective_message.reply_text(translate("invalid_input_text"))
         return MenuState.AGE_GROUP
 
+    return await ask_health_condition(
+        update=update, context=context, translate=translate
+    )
+
+
+@log_update_data
+@send_typing_action
+async def ask_health_condition(
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+) -> MenuState:
+    await update.effective_message.reply_text(
+        translate("health_condition_description"),
+        reply_markup=get_reply_keyboard(
+            [
+                KeyboardButton(translate("health_condition_positive")),
+                KeyboardButton(translate("health_condition_negative")),
+            ],
+            additional_row=[KeyboardButton(translate("previous_question"))],
+        ),
+    )
+
+    return MenuState.HEALTH_CONDITION
+
+
+@log_update_data
+@get_translations
+async def handle_health_condition(
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+) -> MenuState:
+    choice = update.effective_message.text
+
+    if choice == translate("previous_question"):
+        return await ask_age_group(update=update, context=context, translate=translate)
+
+    if choice == translate("health_condition_positive"):
+        await update.effective_message.reply_text(
+            translate("health_condition_on_positive")
+        )
+
+    elif choice == translate("health_condition_negative"):
+        await update.effective_message.reply_text(
+            translate("health_condition_on_negative"),
+            reply_markup=get_main_menu(translate),
+        )
+        return MenuState.MAIN_MENU
+
+    else:
+        await update.effective_message.reply_text(translate("invalid_input_text"))
+        return MenuState.HEALTH_CONDITION
+
     return await ask_goal(update=update, context=context, translate=translate)
 
 
@@ -223,7 +272,9 @@ async def save_goal(
     choice = update.effective_message.text
 
     if choice == translate("previous_question"):
-        return await ask_age_group(update=update, context=context, translate=translate)
+        return await ask_health_condition(
+            update=update, context=context, translate=translate
+        )
 
     if result := verify_filter_reply_keyboard_choice(translate, Goal, choice):
         context.user_data["filters"]["goal"] = result
