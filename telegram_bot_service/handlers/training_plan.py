@@ -3,7 +3,7 @@
 from enum import Enum
 from typing import Callable, cast
 
-from telegram import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
+from telegram import KeyboardButton, ReplyKeyboardMarkup, Update
 from telegram.ext import ContextTypes
 
 from ..admin import notify_individual_plan
@@ -442,7 +442,9 @@ async def send_payment_data(
         translate("payment_training_plan_description").format(
             price=training_plan.price
         ),
-        reply_markup=ReplyKeyboardRemove(),
+        reply_markup=get_reply_keyboard(
+            [KeyboardButton(translate("previous_question"))]
+        ),
     )
 
     await update.effective_message.reply_text(
@@ -458,6 +460,11 @@ async def send_payment_data(
 async def save_payment_screenshot(
     update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
 ) -> MenuState:
+    text = update.effective_message.text
+
+    if text == translate("previous_question"):
+        return await ask_frequency(update=update, context=context, translate=translate)
+
     if not update.message.photo:
         await update.effective_message.reply_text(translate("payment_not_screenshot"))
         return MenuState.PAYMENT_SCREENSHOT
