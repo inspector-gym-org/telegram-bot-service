@@ -4,7 +4,7 @@ from typing import cast
 
 from redis import Redis
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Message, User
-from telegram.error import Forbidden
+from telegram.error import TelegramError
 
 from .config import settings
 from .payment import Payment, PaymentStatus, update_payment
@@ -55,8 +55,11 @@ async def notify_individual_plan(
 
             logger.debug(f"Sent payment {payment.id} notification to {admin_chat_id}")
 
-        except Forbidden:
-            logger.error(f"Unable to send notification to {admin_chat_id}")
+        except TelegramError as exc:
+            logger.error(
+                f"Unable to send payment {payment.id} notification to {admin_chat_id}",
+                exc_info=exc,
+            )
 
     notification_redis.set(str(payment.id), json.dumps(message_ids))
 

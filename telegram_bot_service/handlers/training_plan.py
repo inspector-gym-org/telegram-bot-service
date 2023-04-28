@@ -3,14 +3,7 @@
 from enum import Enum
 from typing import Callable, cast
 
-from telegram import (
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    KeyboardButton,
-    ReplyKeyboardMarkup,
-    ReplyKeyboardRemove,
-    Update,
-)
+from telegram import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
 from telegram.ext import ContextTypes
 
 from ..admin import notify_individual_plan
@@ -26,6 +19,7 @@ from ..training_plan import (
     get_training_plans,
 )
 from .constants import MenuState
+from .equipment_shop import get_equipment_shop_keyboard
 from .helpers import (
     get_reply_keyboard,
     get_translations,
@@ -328,16 +322,7 @@ async def save_environment(
     if context.user_data["filters"]["environment"] == Environment.HOUSE_AND_STREET:
         await update.effective_message.reply_text(
             translate("environment_equipment_recommendation"),
-            reply_markup=InlineKeyboardMarkup(
-                [
-                    [
-                        InlineKeyboardButton(
-                            text=translate("equipment_shop_url_button"),
-                            url=translate("equipment_shop_url"),
-                        )
-                    ],
-                ]
-            ),
+            reply_markup=get_equipment_shop_keyboard(translate),
         )
 
     return await ask_level(update=update, context=context, translate=translate)
