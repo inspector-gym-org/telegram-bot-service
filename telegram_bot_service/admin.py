@@ -57,7 +57,8 @@ async def notify_individual_plan(
 
         except TelegramError as exc:
             logger.error(
-                f"Unable to send notification to {admin_chat_id}", exc_info=exc
+                f"Unable to send payment {payment.id} notification to {admin_chat_id}",
+                exc_info=exc,
             )
 
     notification_redis.set(str(payment.id), json.dumps(message_ids))
