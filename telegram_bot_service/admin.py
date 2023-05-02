@@ -64,7 +64,4 @@ async def notify_individual_plan(
         str(payment.id), mapping=message_ids  # type: ignore[arg-type]
     )
 
-    await update_payment(
-        payment_id=payment.id,  # type: ignore[arg-type]
-        new_status=PaymentStatus.PROCESSING,
-    )
+    await update_payment(payment_id=payment.id, new_status=PaymentStatus.PROCESSING)
