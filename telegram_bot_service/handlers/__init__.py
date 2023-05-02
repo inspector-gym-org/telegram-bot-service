@@ -33,9 +33,7 @@ from .training_plan import (
 @log_update_data
 @get_translations
 async def handle_menu_button(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE,
-    translate: Callable,
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
 ) -> MenuState:
     response = update.effective_message.text  # type: ignore[union-attr]
 
@@ -105,13 +103,11 @@ def register_handlers(telegram_application: Application) -> None:
                     MessageHandler(filters.TEXT & (~filters.COMMAND), save_frequency)
                 ],
                 MenuState.PAYMENT_SCREENSHOT: [
-                    MessageHandler(filters.ALL, save_payment_screenshot),
+                    MessageHandler(filters.ALL, save_payment_screenshot)
                 ],
             },
-            fallbacks=[
-                CommandHandler("start", send_main_menu),
-            ],
-        ),
+            fallbacks=[CommandHandler("start", send_main_menu)],
+        )
     )
 
     telegram_application.add_handler(

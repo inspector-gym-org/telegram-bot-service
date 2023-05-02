@@ -15,7 +15,7 @@ def get_equipment_shop_keyboard(translate: Callable) -> InlineKeyboardMarkup:
                     text=translate("equipment_shop_url_button"),
                     url=translate("equipment_shop_url"),
                 )
-            ],
+            ]
         ]
     )
 
@@ -23,9 +23,7 @@ def get_equipment_shop_keyboard(translate: Callable) -> InlineKeyboardMarkup:
 @log_update_data
 @send_typing_action
 async def send_equipment_shop_data(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE,
-    translate: Callable,
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
 ) -> MenuState:
     await update.effective_message.reply_text(  # type: ignore[union-attr]
         translate("equipment_shop_description"),

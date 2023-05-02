@@ -36,9 +36,7 @@ class AgeGroup(Enum):
     ABOVE_40 = 41
 
 
-def get_button_string_id_from_filter_enum(
-    filter_enum: FilterEnum,
-) -> str:
+def get_button_string_id_from_filter_enum(filter_enum: FilterEnum) -> str:
     return (
         f"{filter_enum.__class__.__name__.lower()}_"
         f"{filter_enum.name.lower()}_button"
@@ -54,9 +52,7 @@ def get_filter_reply_keyboard(
         [
             KeyboardButton(
                 translate(
-                    get_button_string_id_from_filter_enum(
-                        cast(FilterEnum, property),
-                    )
+                    get_button_string_id_from_filter_enum(cast(FilterEnum, property))
                 )
             )
             for property in filter_enum_type
@@ -72,9 +68,7 @@ def verify_filter_reply_keyboard_choice(
     for property in filter_enum_type:
         property = cast(FilterEnum, property)
 
-        if choice == translate(
-            get_button_string_id_from_filter_enum(property),
-        ):
+        if choice == translate(get_button_string_id_from_filter_enum(property)):
             return property
 
     return None
@@ -97,9 +91,7 @@ async def start_training_plan_survey(
 @send_typing_action
 @get_translations
 async def ask_sex(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE,
-    translate: Callable,
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
 ) -> MenuState:
     context.user_data["filters"]["sex"] = None
 
@@ -411,9 +403,7 @@ async def save_frequency(
 @log_update_data
 @send_typing_action
 async def send_payment_data(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE,
-    translate: Callable,
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
 ) -> MenuState:
     training_plan = (await get_training_plans(context.user_data["filters"]))[0]
 
@@ -424,7 +414,7 @@ async def send_payment_data(
                 Item(
                     price=training_plan.price,
                     item_type=ItemType.TRAINING_PLAN,
-                    training_plan_id=training_plan.id,
+                    training_plan_id=training_plan.notion_id,
                 )
             ],
         )
@@ -442,9 +432,7 @@ async def send_payment_data(
         ),
     )
 
-    await update.effective_message.reply_text(
-        translate("payment_monobank_card_data"),
-    )
+    await update.effective_message.reply_text(translate("payment_monobank_card_data"))
 
     return MenuState.PAYMENT_SCREENSHOT
 
@@ -474,4 +462,5 @@ async def save_payment_screenshot(
         translate("payment_wait_confirmation"), reply_markup=get_main_menu(translate)
     )
 
+    context.user_data.clear()
     return MenuState.MAIN_MENU
