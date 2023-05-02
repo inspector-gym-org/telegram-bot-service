@@ -1,8 +1,8 @@
 from enum import Enum
 
 import httpx
-from pydantic import BaseModel
 from fastapi.encoders import jsonable_encoder
+from pydantic import BaseModel, Field
 
 from .config import settings
 
@@ -31,7 +31,7 @@ class PaymentStatus(Enum):
 
 
 class Payment(BaseModel):
-    id: str
+    id: str = Field(alias="_id")
 
     user: User
     items: list[Item]
