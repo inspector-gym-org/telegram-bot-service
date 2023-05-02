@@ -1,6 +1,6 @@
 import httpx
-from fastapi import status
 from pydantic import BaseModel
+from fastapi.encoders import jsonable_encoder
 
 from .config import settings
 
@@ -13,15 +13,12 @@ class User(BaseModel):
     username: str | None
 
 
-async def create_user(user: User) -> User | None:
+async def create_user(user: User) -> User:
     async with httpx.AsyncClient() as client:
         response = await client.post(
             url=settings.user_service_url + "/",
             timeout=settings.user_service_timeout,
-            json=user.dict(),
+            json=jsonable_encoder(user),
         )
-
-    if response.status_code not in (status.HTTP_200_OK, status.HTTP_201_CREATED):
-        return None
 
     return User(**response.json())

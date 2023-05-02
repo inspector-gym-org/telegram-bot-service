@@ -5,7 +5,7 @@ from .config import settings
 
 defaults = Defaults(parse_mode=ParseMode.MARKDOWN)
 
-telegram_application = (
+telegram_application: Application = (
     Application.builder()
     .token(settings.telegram_bot_token)
     .concurrent_updates(True)

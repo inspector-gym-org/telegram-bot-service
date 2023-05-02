@@ -14,6 +14,7 @@ from telegram.ext import (
 from .admin import handle_dummy_inline_button, update_payment_button
 from .constants import MenuState
 from .equipment_shop import send_equipment_shop_data
+from .error_handler import error_handler
 from .helpers import get_translations, log_update_data
 from .main_menu import send_main_menu
 from .training_plan import (
@@ -33,9 +34,7 @@ from .training_plan import (
 @log_update_data
 @get_translations
 async def handle_menu_button(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE,
-    translate: Callable,
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
 ) -> MenuState:
     response = update.effective_message.text  # type: ignore[union-attr]
 
@@ -105,13 +104,11 @@ def register_handlers(telegram_application: Application) -> None:
                     MessageHandler(filters.TEXT & (~filters.COMMAND), save_frequency)
                 ],
                 MenuState.PAYMENT_SCREENSHOT: [
-                    MessageHandler(filters.ALL, save_payment_screenshot),
+                    MessageHandler(filters.ALL, save_payment_screenshot)
                 ],
             },
-            fallbacks=[
-                CommandHandler("start", send_main_menu),
-            ],
-        ),
+            fallbacks=[CommandHandler("start", send_main_menu)],
+        )
     )
 
     telegram_application.add_handler(
@@ -121,3 +118,5 @@ def register_handlers(telegram_application: Application) -> None:
     telegram_application.add_handler(
         CallbackQueryHandler(handle_dummy_inline_button, pattern="^dummy")
     )
+
+    telegram_application.add_error_handler(error_handler)

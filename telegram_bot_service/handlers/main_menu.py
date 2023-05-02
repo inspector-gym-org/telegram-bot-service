@@ -16,12 +16,8 @@ from .helpers import (
 def get_main_menu(translate: Callable) -> ReplyKeyboardMarkup:
     return get_reply_keyboard(
         [
-            KeyboardButton(
-                translate("individual_training_plan_button"),
-            ),
-            KeyboardButton(
-                translate("ready_made_plans_button"),
-            ),
+            KeyboardButton(translate("individual_training_plan_button")),
+            KeyboardButton(translate("ready_made_plans_button")),
             KeyboardButton(translate("educational_plan_button")),
             KeyboardButton(translate("equipment_shop_button")),
         ],
@@ -35,13 +31,11 @@ def get_main_menu(translate: Callable) -> ReplyKeyboardMarkup:
 @authenticate_user
 @get_translations
 async def send_main_menu(
-    update: Update,
-    context: ContextTypes.DEFAULT_TYPE,
-    user: User,
-    translate: Callable,
+    update: Update, context: ContextTypes.DEFAULT_TYPE, user: User, translate: Callable
 ) -> MenuState:
     await update.effective_message.reply_text(  # type: ignore[union-attr]
         translate("main_menu"), reply_markup=get_main_menu(translate)
     )
 
+    context.user_data.clear()
     return MenuState.MAIN_MENU

@@ -33,7 +33,7 @@ def log_update_data(
 
 
 def authenticate_user(
-    wrapped: Callable[..., Any],
+    wrapped: Callable[..., Any]
 ) -> Callable[..., Coroutine[Any, Any, Any]]:
     @wraps(wrapped)
     async def wrapper(update: Update, *args, **kwargs) -> Coroutine[Any, Any, Any]:
@@ -68,12 +68,12 @@ def send_typing_action(
 
 
 def get_translations(
-    wrapped: Callable[..., Any],
+    wrapped: Callable[..., Any]
 ) -> Callable[..., Coroutine[Any, Any, Any]]:
     @wraps(wrapped)
     async def wrapper(update: Update, *args, **kwargs) -> Coroutine[Any, Any, Any]:
         kwargs["translate"] = get_user_translation_function(
-            update.effective_user.id,  # type: ignore[union-attr]
+            update.effective_user.id  # type: ignore[union-attr]
         )
 
         return await wrapped(update=update, *args, **kwargs)

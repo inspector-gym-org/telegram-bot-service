@@ -1,4 +1,3 @@
-import json
 from logging import getLogger
 
 from redis import Redis
@@ -15,6 +14,7 @@ notification_redis = Redis(
     host=settings.redis_host,
     port=settings.redis_port,
     db=settings.redis_admin_notification_db,
+    decode_responses=True,
 )
 
 
@@ -43,14 +43,14 @@ async def notify_individual_plan(
         ]
     )
 
-    message_ids = []
+    message_ids = {}
 
     for admin_chat_id in settings.bot_admin_chat_ids:
         try:
             message = await media_message.copy(
                 chat_id=admin_chat_id, caption=caption, reply_markup=reply_markup
             )
-            message_ids.append((admin_chat_id, message.message_id))
+            message_ids[str(admin_chat_id)] = message.message_id
 
             logger.debug(f"Sent payment {payment.id} notification to {admin_chat_id}")
 
@@ -60,9 +60,8 @@ async def notify_individual_plan(
                 exc_info=exc,
             )
 
-    notification_redis.set(str(payment.id), json.dumps(message_ids))
-
-    await update_payment(
-        payment_id=payment.id,  # type: ignore
-        new_status=PaymentStatus.PROCESSING,
+    notification_redis.hset(
+        str(payment.id), mapping=message_ids  # type: ignore[arg-type]
     )
+
+    await update_payment(payment_id=payment.id, new_status=PaymentStatus.PROCESSING)
