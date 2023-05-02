@@ -31,7 +31,7 @@ async def update_payment_button(
     _, action, payment_id = query.data.split(";")
 
     status = ACTION_TO_STATUS[action]
-    payment = update_payment(payment_id, status)
+    payment = await update_payment(payment_id, status)
 
     if not payment:
         return
@@ -41,7 +41,7 @@ async def update_payment_button(
 
     if status == PaymentStatus.ACCEPTED:
         message = "Підтверджено"
-        training_plan = get_training_plan(
+        training_plan = await get_training_plan(
             payment.items[0].training_plan_id,  # type: ignore
         )
 

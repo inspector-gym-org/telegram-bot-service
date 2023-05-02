@@ -3,7 +3,7 @@
 from enum import Enum
 from typing import Callable, cast
 
-from telegram import KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove, Update
+from telegram import KeyboardButton, ReplyKeyboardMarkup, Update
 from telegram.ext import ContextTypes
 
 from ..admin import notify_individual_plan
@@ -15,7 +15,7 @@ from ..training_plan import (
     Goal,
     Level,
     Sex,
-    get_existing_property_values,
+    get_property_values,
     get_training_plans,
 )
 from .constants import MenuState
@@ -103,9 +103,7 @@ async def ask_sex(
 ) -> MenuState:
     context.user_data["filters"]["sex"] = None
 
-    available_values = get_existing_property_values(
-        filter_enum=Sex, **context.user_data["filters"]
-    )
+    available_values = await get_property_values(Sex, context.user_data["filters"])
 
     await update.effective_message.reply_text(
         translate("sex_description"),
@@ -246,9 +244,7 @@ async def ask_goal(
 ) -> MenuState:
     context.user_data["filters"]["goal"] = None
 
-    available_values = get_existing_property_values(
-        filter_enum=Goal, **context.user_data["filters"]
-    )
+    available_values = await get_property_values(Goal, context.user_data["filters"])
 
     await update.effective_message.reply_text(
         translate("goal_description"),
@@ -287,8 +283,8 @@ async def ask_environment(
 ) -> MenuState:
     context.user_data["filters"]["environment"] = None
 
-    available_values = get_existing_property_values(
-        filter_enum=Environment, **context.user_data["filters"]
+    available_values = await get_property_values(
+        Environment, context.user_data["filters"]
     )
 
     await update.effective_message.reply_text(
@@ -335,9 +331,7 @@ async def ask_level(
 ) -> MenuState:
     context.user_data["filters"]["level"] = None
 
-    available_values = get_existing_property_values(
-        filter_enum=Level, **context.user_data["filters"]
-    )
+    available_values = await get_property_values(Level, context.user_data["filters"])
 
     await update.effective_message.reply_text(
         translate("level_description"),
@@ -376,8 +370,8 @@ async def ask_frequency(
 ) -> MenuState:
     context.user_data["filters"]["frequency"] = None
 
-    available_values = get_existing_property_values(
-        filter_enum=Frequency, **context.user_data["filters"]
+    available_values = await get_property_values(
+        Frequency, context.user_data["filters"]
     )
 
     if len(available_values) == 1:
@@ -421,8 +415,9 @@ async def send_payment_data(
     context: ContextTypes.DEFAULT_TYPE,
     translate: Callable,
 ) -> MenuState:
-    training_plan = get_training_plans(**context.user_data["filters"])[0]
-    payment = create_payment(
+    training_plan = (await get_training_plans(context.user_data["filters"]))[0]
+
+    payment = await create_payment(
         Payment(
             user={"telegram_id": update.effective_user.id},
             items=[
@@ -442,7 +437,9 @@ async def send_payment_data(
         translate("payment_training_plan_description").format(
             price=training_plan.price
         ),
-        reply_markup=ReplyKeyboardRemove(),
+        reply_markup=get_reply_keyboard(
+            [KeyboardButton(translate("previous_question"))]
+        ),
     )
 
     await update.effective_message.reply_text(
@@ -458,6 +455,11 @@ async def send_payment_data(
 async def save_payment_screenshot(
     update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
 ) -> MenuState:
+    text = update.effective_message.text
+
+    if text == translate("previous_question"):
+        return await ask_frequency(update=update, context=context, translate=translate)
+
     if not update.message.photo:
         await update.effective_message.reply_text(translate("payment_not_screenshot"))
         return MenuState.PAYMENT_SCREENSHOT

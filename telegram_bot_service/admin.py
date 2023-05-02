@@ -1,9 +1,8 @@
 import json
 from logging import getLogger
-from typing import cast
 
 from redis import Redis
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Message, User
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from telegram.error import TelegramError
 
 from .config import settings
@@ -22,10 +21,10 @@ notification_redis = Redis(
 async def notify_individual_plan(
     media_message: Message, payment: Payment, training_plan: TrainingPlan
 ) -> None:
-    user = cast(User, media_message.from_user)
+    user = media_message.from_user
 
     caption = (
-        "*Оплата індивідуального плану*\n"
+        "*Оплата індивідуального плану*\n"  # type: ignore[union-attr]
         f"*Сума:* _{training_plan.price:.2f} грн_\n"
         f"*План:* [Notion-сторінка]({training_plan.url})\n"
         f"*Користувач:* [Telegram-профіль](tg://user?id={user.id})"
@@ -63,7 +62,7 @@ async def notify_individual_plan(
 
     notification_redis.set(str(payment.id), json.dumps(message_ids))
 
-    update_payment(
+    await update_payment(
         payment_id=payment.id,  # type: ignore
         new_status=PaymentStatus.PROCESSING,
     )
