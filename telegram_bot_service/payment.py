@@ -1,10 +1,10 @@
-import json
 from enum import Enum
 from uuid import UUID
 
-import requests
+import httpx
 from fastapi import status
 from pydantic import BaseModel, Field
+from fastapi.encoders import jsonable_encoder
 
 from .config import settings
 
@@ -42,12 +42,13 @@ class Payment(BaseModel):
         allow_population_by_field_name = True
 
 
-def create_payment(payment: Payment) -> Payment | None:
-    response = requests.post(
-        url=settings.payment_service_url + "/",
-        timeout=settings.payment_service_timeout,
-        data=payment.json(exclude={"id"}),
-    )
+async def create_payment(payment: Payment) -> Payment | None:
+    async with httpx.AsyncClient() as client:
+        response = await client.post(
+            url=settings.payment_service_url + "/",
+            timeout=settings.payment_service_timeout,
+            json=jsonable_encoder(payment.dict(exclude={"id"})),
+        )
 
     if response.status_code not in (status.HTTP_200_OK, status.HTTP_201_CREATED):
         return None
@@ -55,12 +56,13 @@ def create_payment(payment: Payment) -> Payment | None:
     return Payment(**response.json())
 
 
-def update_payment(payment_id: str, new_status: PaymentStatus) -> Payment | None:
-    response = requests.put(
-        url=settings.payment_service_url + f"/{payment_id}",
-        timeout=settings.payment_service_timeout,
-        data=json.dumps({"status": new_status.value}),
-    )
+async def update_payment(payment_id: str, new_status: PaymentStatus) -> Payment | None:
+    async with httpx.AsyncClient() as client:
+        response = await client.put(
+            url=settings.payment_service_url + f"/{payment_id}/",
+            timeout=settings.payment_service_timeout,
+            json={"status": new_status.value},
+        )
 
     if response.status_code != status.HTTP_200_OK:
         return None

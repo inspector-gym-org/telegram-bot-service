@@ -1,7 +1,8 @@
 from enum import Enum
+from typing import TypedDict
 from uuid import UUID
 
-import requests
+import httpx
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 
@@ -58,60 +59,59 @@ class TrainingPlan(BaseModel):
     content_url: str
 
 
-def get_training_plans(
-    sex: Sex | None = None,
-    goal: Goal | None = None,
-    level: Level | None = None,
-    frequency: Frequency | None = None,
-    environment: Environment | None = None,
+class Filters(BaseModel):
+    sex: Sex | None
+    goal: Goal | None
+    environment: Environment | None
+    level: Level | None
+    frequency: Frequency | None
+
+
+class FiltersDict(TypedDict):
+    sex: Sex | None
+    goal: Goal | None
+    environment: Environment | None
+    level: Level | None
+    frequency: Frequency | None
+
+
+async def get_training_plans(
+    filters: FiltersDict,
 ) -> list[TrainingPlan]:
-    response = requests.get(
-        url=settings.training_plan_service_url + "/",
-        timeout=settings.training_plan_service_timeout,
-        params=jsonable_encoder(
-            {
-                "sex": sex,
-                "goal": goal,
-                "level": level,
-                "frequency": frequency,
-                "environment": environment,
-            },
-        ),
-    )
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            url=settings.training_plan_service_url + "/",
+            timeout=settings.training_plan_service_timeout,
+            params=jsonable_encoder(
+                Filters(**filters).dict(exclude_none=True),
+            ),
+        )
 
     return [TrainingPlan(**plan) for plan in response.json()]
 
 
-def get_training_plan(training_plan_id: UUID) -> TrainingPlan:
-    response = requests.get(
-        url=settings.training_plan_service_url + f"/{training_plan_id.hex}",
-        timeout=settings.training_plan_service_timeout,
-    )
+async def get_training_plan(training_plan_id: UUID) -> TrainingPlan:
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            url=settings.training_plan_service_url + f"/{training_plan_id.hex}/",
+            timeout=settings.training_plan_service_timeout,
+        )
 
     return TrainingPlan(**response.json())
 
 
-def get_existing_property_values(
+async def get_property_values(
     filter_enum: type[FilterEnum],
-    sex: Sex | None = None,
-    goal: Goal | None = None,
-    level: Level | None = None,
-    frequency: Frequency | None = None,
-    environment: Environment | None = None,
+    filters: FiltersDict,
 ) -> list[FilterEnum]:
-    response = requests.get(
-        url=settings.training_plan_service_url + "/existing-property-values/",
-        timeout=settings.training_plan_service_timeout,
-        params=jsonable_encoder(
-            {
-                "property": filter_enum.__name__.lower(),
-                "sex": sex,
-                "goal": goal,
-                "level": level,
-                "frequency": frequency,
-                "environment": environment,
-            }
-        ),
-    )
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            url=settings.training_plan_service_url
+            + f"/property/{filter_enum.__name__.lower()}/",
+            timeout=settings.training_plan_service_timeout,
+            params=jsonable_encoder(
+                Filters(**filters).dict(exclude_none=True),
+            ),
+        )
 
     return [filter_enum(value) for value in response.json()]
