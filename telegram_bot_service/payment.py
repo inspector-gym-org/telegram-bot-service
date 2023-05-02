@@ -47,7 +47,7 @@ async def create_payment(payment: Payment) -> Payment | None:
         response = await client.post(
             url=settings.payment_service_url + "/",
             timeout=settings.payment_service_timeout,
-            json=jsonable_encoder(payment.dict(exclude={"id"})),
+            json=jsonable_encoder(payment, exclude={"id"}),
         )
 
     if response.status_code not in (status.HTTP_200_OK, status.HTTP_201_CREATED):
