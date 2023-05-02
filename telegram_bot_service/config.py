@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     payment_service_timeout: int
 
     bot_admin_chat_ids: list[int]
+    bot_developer_chat_ids: list[int]
 
     log_level: str
     log_format: str

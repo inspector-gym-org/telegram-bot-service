@@ -14,6 +14,7 @@ from telegram.ext import (
 from .admin import handle_dummy_inline_button, update_payment_button
 from .constants import MenuState
 from .equipment_shop import send_equipment_shop_data
+from .error_handler import error_handler
 from .helpers import get_translations, log_update_data
 from .main_menu import send_main_menu
 from .training_plan import (
@@ -117,3 +118,5 @@ def register_handlers(telegram_application: Application) -> None:
     telegram_application.add_handler(
         CallbackQueryHandler(handle_dummy_inline_button, pattern="^dummy")
     )
+
+    telegram_application.add_error_handler(error_handler)
