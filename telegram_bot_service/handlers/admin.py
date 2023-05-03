@@ -1,14 +1,17 @@
+# mypy: disable-error-code="union-attr"
+
 from logging import getLogger
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
+from telegram.constants import ChatAction
 from telegram.error import TelegramError
 from telegram.ext import ContextTypes
 
 from ..admin import notification_redis
 from ..language import get_user_translation_function
 from ..payment import PaymentStatus, update_payment
-from ..training_plan import get_training_plan
-from .helpers import log_update_data
+from ..training_plan import fetch_training_plans, get_training_plan
+from .helpers import log_update_data, require_admin
 
 logger = getLogger("service")
 
@@ -19,6 +22,20 @@ ACTION_TO_STATUS = {
 
 
 @log_update_data
+@require_admin
+async def fetch_plans(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_text("Оновлення планів тренувань розпочато")
+    await update.message.reply_chat_action(ChatAction.TYPING)
+
+    if await fetch_training_plans():
+        await update.message.reply_text("Оновлення завершено успішно")
+        return
+
+    await update.message.reply_text("Помилка при оновленні планів тренувань")
+
+
+@log_update_data
+@require_admin
 async def update_payment_button(
     update: Update, context: ContextTypes.DEFAULT_TYPE
 ) -> None:
@@ -68,7 +85,7 @@ async def update_payment_button(
                 f"Unable to send payment {payment_id} confirmation to {user_id}",
                 exc_info=exc,
             )
-            await update.effective_message.reply_text(  # type: ignore[union-attr]
+            await update.effective_message.reply_text(
                 "Помилка відправки повідомлення про підтвердження користувачу",
                 quote=True,
             )
@@ -87,7 +104,7 @@ async def update_payment_button(
                 f"Unable to send payment {payment_id} rejection to {user_id}",
                 exc_info=exc,
             )
-            await update.effective_message.reply_text(  # type: ignore[union-attr]
+            await update.effective_message.reply_text(
                 "Помилка відправки повідомлення про відмову користувачу", quote=True
             )
 

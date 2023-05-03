@@ -7,6 +7,7 @@ from telegram import User as TelegramUser
 from telegram.constants import ChatAction
 from telegram.ext import ContextTypes
 
+from ..config import settings
 from ..language import get_user_translation_function
 from ..user import User, create_user
 
@@ -47,6 +48,20 @@ def authenticate_user(
         )
 
         kwargs["user"] = await create_user(user)
+
+        return await wrapped(update=update, *args, **kwargs)
+
+    return wrapper
+
+
+def require_admin(
+    wrapped: Callable[..., Any]
+) -> Callable[..., Coroutine[Any, Any, Any]]:
+    @wraps(wrapped)
+    async def wrapper(update: Update, *args, **kwargs) -> Coroutine[Any, Any, Any]:
+        user_id = update.effective_user.id  # type: ignore[union-attr]
+        if user_id not in settings.bot_admin_chat_ids:
+            raise PermissionError(f"User {user_id} is not admin")
 
         return await wrapped(update=update, *args, **kwargs)
 
