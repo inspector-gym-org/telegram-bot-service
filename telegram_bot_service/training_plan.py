@@ -2,6 +2,7 @@ from enum import Enum
 from typing import TypedDict
 
 import httpx
+from fastapi import status
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 
@@ -75,6 +76,16 @@ async def get_training_plans(filters: FiltersDict) -> list[TrainingPlan]:
         )
 
     return [TrainingPlan(**plan) for plan in response.json()]
+
+
+async def fetch_training_plans() -> bool:
+    async with httpx.AsyncClient() as client:
+        response = await client.put(
+            url=settings.training_plan_service_url + "/",
+            timeout=settings.training_plan_service_timeout,
+        )
+
+    return response.status_code == status.HTTP_204_NO_CONTENT
 
 
 async def get_training_plan(training_plan_id: str) -> TrainingPlan:

@@ -11,7 +11,7 @@ from telegram.ext import (
     filters,
 )
 
-from .admin import handle_dummy_inline_button, update_payment_button
+from .admin import fetch_plans, handle_dummy_inline_button, update_payment_button
 from .constants import MenuState
 from .equipment_shop import send_equipment_shop_data
 from .error_handler import error_handler
@@ -110,6 +110,8 @@ def register_handlers(telegram_application: Application) -> None:
             fallbacks=[CommandHandler("start", send_main_menu)],
         )
     )
+
+    telegram_application.add_handler(CommandHandler("fetch_plans", fetch_plans))
 
     telegram_application.add_handler(
         CallbackQueryHandler(update_payment_button, pattern="^update_payment")
