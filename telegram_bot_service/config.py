@@ -28,4 +28,4 @@ class Settings(BaseSettings):
     log_date_format: str
 
 
-settings = Settings()  # type: ignore[call-arg]
+settings = Settings()  # pyright: ignore [reportGeneralTypeIssues]

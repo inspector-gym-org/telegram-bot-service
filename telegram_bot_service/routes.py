@@ -1,3 +1,5 @@
+# pyright: reportMissingTypeArgument=false
+
 from fastapi import APIRouter, Header, Response, status
 from pydantic import BaseModel
 from telegram import Update

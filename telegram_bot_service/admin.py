@@ -24,10 +24,11 @@ async def notify_individual_plan(
     user = media_message.from_user
 
     caption = (
-        "*Оплата індивідуального плану*\n"  # type: ignore[union-attr]
+        "*Оплата індивідуального плану*\n"
         f"*Сума:* _{training_plan.price:.2f} грн_\n"
         f"*План:* [Notion-сторінка]({training_plan.url})\n"
-        f"*Користувач:* [Telegram-профіль](tg://user?id={user.id})"
+        "*Користувач:* [Telegram-профіль]"
+        f"(tg://user?id={user.id})"  # pyright: ignore [reportOptionalMemberAccess]
     )
 
     reply_markup = InlineKeyboardMarkup(
@@ -60,8 +61,6 @@ async def notify_individual_plan(
                 exc_info=exc,
             )
 
-    notification_redis.hset(
-        str(payment.id), mapping=message_ids  # type: ignore[arg-type]
-    )
+    notification_redis.hset(str(payment.id), mapping=message_ids)
 
     await update_payment(payment_id=payment.id, new_status=PaymentStatus.PROCESSING)
