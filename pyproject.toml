@@ -33,4 +33,3 @@ skip_magic_trailing_comma = true
 
 [tool.pyright]
 typeCheckingMode = "strict"
-reportInvalidTypeVarUse = false
