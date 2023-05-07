@@ -1,7 +1,7 @@
-# mypy: disable-error-code="arg-type,index,union-attr"
+# pyright: reportUnknownArgumentType=false
+# pyright: reportOptionalSubscript=false, reportOptionalMemberAccess=false
 
 from enum import Enum
-from typing import Callable, cast
 
 from telegram import KeyboardButton, ReplyKeyboardMarkup, Update
 from telegram.ext import ContextTypes
@@ -18,6 +18,7 @@ from ..training_plan import (
     get_property_values,
     get_training_plans,
 )
+from ..types import Translate
 from .constants import MenuState
 from .equipment_shop import get_equipment_shop_keyboard
 from .helpers import (
@@ -44,17 +45,13 @@ def get_button_string_id_from_filter_enum(filter_enum: FilterEnum) -> str:
 
 
 def get_filter_reply_keyboard(
-    translate: Callable,
+    translate: Translate,
     filter_enum_type: type[FilterEnum],
     available_values: list[FilterEnum],
 ) -> ReplyKeyboardMarkup:
     return get_reply_keyboard(
         [
-            KeyboardButton(
-                translate(
-                    get_button_string_id_from_filter_enum(cast(FilterEnum, property))
-                )
-            )
+            KeyboardButton(translate(get_button_string_id_from_filter_enum(property)))
             for property in filter_enum_type
             if property in available_values
         ],
@@ -63,11 +60,9 @@ def get_filter_reply_keyboard(
 
 
 def verify_filter_reply_keyboard_choice(
-    translate: Callable, filter_enum_type: type[FilterEnum], choice: str
+    translate: Translate, filter_enum_type: type[FilterEnum], choice: str
 ) -> FilterEnum | None:
     for property in filter_enum_type:
-        property = cast(FilterEnum, property)
-
         if choice == translate(get_button_string_id_from_filter_enum(property)):
             return property
 
@@ -76,7 +71,7 @@ def verify_filter_reply_keyboard_choice(
 
 @log_update_data
 async def start_training_plan_survey(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
     await update.effective_message.reply_text(
         translate("individual_training_plan_description"),
@@ -91,7 +86,7 @@ async def start_training_plan_survey(
 @send_typing_action
 @get_translations
 async def ask_sex(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
     context.user_data["filters"]["sex"] = None
 
@@ -109,14 +104,16 @@ async def ask_sex(
 @send_typing_action
 @get_translations
 async def save_sex(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
     choice = update.effective_message.text
 
     if choice == translate("previous_question"):
         return await send_main_menu(update=update, context=context)
 
-    if result := verify_filter_reply_keyboard_choice(translate, Sex, choice):
+    if result := verify_filter_reply_keyboard_choice(
+        translate, Sex, choice  # pyright: ignore [reportGeneralTypeIssues]
+    ):
         context.user_data["filters"]["sex"] = result
 
     else:
@@ -129,7 +126,7 @@ async def save_sex(
 @log_update_data
 @send_typing_action
 async def ask_age_group(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
     context.user_data["age_group"] = None
 
@@ -153,7 +150,7 @@ async def ask_age_group(
 @log_update_data
 @get_translations
 async def save_age_group(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
     choice = update.effective_message.text
 
@@ -184,7 +181,7 @@ async def save_age_group(
 @log_update_data
 @send_typing_action
 async def ask_health_condition(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
     await update.effective_message.reply_text(
         translate("health_condition_description"),
@@ -203,7 +200,7 @@ async def ask_health_condition(
 @log_update_data
 @get_translations
 async def handle_health_condition(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
     choice = update.effective_message.text
 
@@ -232,7 +229,7 @@ async def handle_health_condition(
 @log_update_data
 @send_typing_action
 async def ask_goal(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
     context.user_data["filters"]["goal"] = None
 
@@ -249,7 +246,7 @@ async def ask_goal(
 @log_update_data
 @get_translations
 async def save_goal(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
     choice = update.effective_message.text
 
@@ -258,7 +255,9 @@ async def save_goal(
             update=update, context=context, translate=translate
         )
 
-    if result := verify_filter_reply_keyboard_choice(translate, Goal, choice):
+    if result := verify_filter_reply_keyboard_choice(
+        translate, Goal, choice  # pyright: ignore [reportGeneralTypeIssues]
+    ):
         context.user_data["filters"]["goal"] = result
 
     else:
@@ -271,7 +270,7 @@ async def save_goal(
 @log_update_data
 @send_typing_action
 async def ask_environment(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
     context.user_data["filters"]["environment"] = None
 
@@ -293,14 +292,16 @@ async def ask_environment(
 @send_typing_action
 @get_translations
 async def save_environment(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
     choice = update.effective_message.text
 
     if choice == translate("previous_question"):
         return await ask_goal(update=update, context=context, translate=translate)
 
-    if result := verify_filter_reply_keyboard_choice(translate, Environment, choice):
+    if result := verify_filter_reply_keyboard_choice(
+        translate, Environment, choice  # pyright: ignore [reportGeneralTypeIssues]
+    ):
         context.user_data["filters"]["environment"] = result
 
     else:
@@ -319,7 +320,7 @@ async def save_environment(
 @log_update_data
 @send_typing_action
 async def ask_level(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
     context.user_data["filters"]["level"] = None
 
@@ -336,7 +337,7 @@ async def ask_level(
 @log_update_data
 @get_translations
 async def save_level(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
     choice = update.effective_message.text
 
@@ -345,7 +346,9 @@ async def save_level(
             update=update, context=context, translate=translate
         )
 
-    if result := verify_filter_reply_keyboard_choice(translate, Level, choice):
+    if result := verify_filter_reply_keyboard_choice(
+        translate, Level, choice  # pyright: ignore [reportGeneralTypeIssues]
+    ):
         context.user_data["filters"]["level"] = result
 
     else:
@@ -358,7 +361,7 @@ async def save_level(
 @log_update_data
 @send_typing_action
 async def ask_frequency(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
     context.user_data["filters"]["frequency"] = None
 
@@ -383,14 +386,16 @@ async def ask_frequency(
 @log_update_data
 @get_translations
 async def save_frequency(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
     choice = update.effective_message.text
 
     if choice == translate("previous_question"):
         return await ask_level(update=update, context=context, translate=translate)
 
-    if result := verify_filter_reply_keyboard_choice(translate, Frequency, choice):
+    if result := verify_filter_reply_keyboard_choice(
+        translate, Frequency, choice  # pyright: ignore [reportGeneralTypeIssues]
+    ):
         context.user_data["filters"]["frequency"] = result
 
     else:
@@ -403,14 +408,16 @@ async def save_frequency(
 @log_update_data
 @send_typing_action
 async def send_payment_data(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
     training_plan = (await get_training_plans(context.user_data["filters"]))[0]
 
     payment = await create_payment(
         Payment(
             _id="",  # will be generated by the database
-            user={"telegram_id": update.effective_user.id},
+            user={
+                "telegram_id": update.effective_user.id
+            },  # pyright: ignore [reportGeneralTypeIssues]
             items=[
                 Item(
                     price=training_plan.price,
@@ -442,7 +449,7 @@ async def send_payment_data(
 @send_typing_action
 @get_translations
 async def save_payment_screenshot(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
     text = update.effective_message.text
 
@@ -454,7 +461,7 @@ async def save_payment_screenshot(
         return MenuState.PAYMENT_SCREENSHOT
 
     await notify_individual_plan(
-        update.effective_message,
+        update.effective_message,  # pyright: ignore [reportGeneralTypeIssues]
         payment=context.user_data["payment"],
         training_plan=context.user_data["training_plan"],
     )

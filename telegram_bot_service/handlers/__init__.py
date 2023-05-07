@@ -1,8 +1,8 @@
-from typing import Callable
+# pyright: reportOptionalMemberAccess=false
+
 
 from telegram import Update
 from telegram.ext import (
-    Application,
     CallbackQueryHandler,
     CommandHandler,
     ContextTypes,
@@ -11,6 +11,7 @@ from telegram.ext import (
     filters,
 )
 
+from ..types import TelegramApplication, Translate
 from .admin import fetch_plans, handle_dummy_inline_button, update_payment_button
 from .constants import MenuState
 from .equipment_shop import send_equipment_shop_data
@@ -34,9 +35,9 @@ from .training_plan import (
 @log_update_data
 @get_translations
 async def handle_menu_button(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Callable
+    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
-    response = update.effective_message.text  # type: ignore[union-attr]
+    response = update.effective_message.text
 
     if response == translate("individual_training_plan_button"):
         return await start_training_plan_survey(
@@ -44,15 +45,11 @@ async def handle_menu_button(
         )
 
     elif response == translate("ready_made_plans_button"):
-        await update.effective_message.reply_text(  # type: ignore[union-attr]
-            translate("coming_soon")
-        )
+        await update.effective_message.reply_text(translate("coming_soon"))
         return MenuState.MAIN_MENU
 
     elif response == translate("educational_plan_button"):
-        await update.effective_message.reply_text(  # type: ignore[union-attr]
-            translate("coming_soon")
-        )
+        await update.effective_message.reply_text(translate("coming_soon"))
         return MenuState.MAIN_MENU
 
     elif response == translate("equipment_shop_button"):
@@ -63,7 +60,7 @@ async def handle_menu_button(
     return MenuState.MAIN_MENU
 
 
-def register_handlers(telegram_application: Application) -> None:
+def register_handlers(telegram_application: TelegramApplication) -> None:
     telegram_application.add_handler(
         ConversationHandler(
             entry_points=[

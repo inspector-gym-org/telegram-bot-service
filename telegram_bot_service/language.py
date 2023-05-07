@@ -1,10 +1,10 @@
 import gettext
 from enum import Enum
-from typing import Callable
 
 from redis import Redis
 
 from .config import settings
+from .types import Translate
 
 language_redis = Redis(
     host=settings.redis_host,
@@ -19,7 +19,7 @@ class Language(Enum):
     ENGLISH = "en"
 
 
-def get_user_translation_function(telegram_id: int) -> Callable[[str], str]:
+def get_user_translation_function(telegram_id: int) -> Translate:
     language = Language.UKRAINIAN
 
     if redis_value := language_redis.get(str(telegram_id)):

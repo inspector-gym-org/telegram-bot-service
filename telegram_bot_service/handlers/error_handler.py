@@ -16,7 +16,9 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
     logger.error("Exception while handling an update:", exc_info=context.error)
 
     tb_list = traceback.format_exception(
-        None, context.error, context.error.__traceback__  # type: ignore[union-attr]
+        None,
+        context.error,
+        context.error.__traceback__,  # pyright: ignore [reportOptionalMemberAccess]
     )
     tb_string = "".join(tb_list)
 

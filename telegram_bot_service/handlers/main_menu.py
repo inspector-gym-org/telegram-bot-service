@@ -1,8 +1,9 @@
-from typing import Callable
+# pyright: reportOptionalMemberAccess=false
 
 from telegram import KeyboardButton, ReplyKeyboardMarkup, Update
 from telegram.ext import ContextTypes
 
+from ..types import Translate
 from ..user import User
 from .constants import MenuState
 from .helpers import (
@@ -13,7 +14,7 @@ from .helpers import (
 )
 
 
-def get_main_menu(translate: Callable) -> ReplyKeyboardMarkup:
+def get_main_menu(translate: Translate) -> ReplyKeyboardMarkup:
     return get_reply_keyboard(
         [
             KeyboardButton(translate("individual_training_plan_button")),
@@ -31,9 +32,9 @@ def get_main_menu(translate: Callable) -> ReplyKeyboardMarkup:
 @authenticate_user
 @get_translations
 async def send_main_menu(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, user: User, translate: Callable
+    update: Update, context: ContextTypes.DEFAULT_TYPE, user: User, translate: Translate
 ) -> MenuState:
-    await update.effective_message.reply_text(  # type: ignore[union-attr]
+    await update.effective_message.reply_text(
         translate("main_menu"), reply_markup=get_main_menu(translate)
     )
 
