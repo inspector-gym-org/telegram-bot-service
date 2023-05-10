@@ -1,3 +1,5 @@
+# mypy: disable-error-code="type-arg"
+
 # pyright: reportMissingTypeArgument=false
 
 from fastapi import APIRouter, Header, Response, status

@@ -18,7 +18,9 @@ redis = {extras = ["hiredis"], version = "^4.5.4"}
 black = "^23.3.0"
 pre-commit = "^3.2.2"
 ruff = "^0.0.265"
-pyright = "^1.1.306"
+mypy = "^1.2.0"
+types-redis = "^4.5.5.0"
+types-requests = "^2.30.0.0"
 
 
 [tool.poetry.group.prod.dependencies]
@@ -30,6 +32,3 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 skip_magic_trailing_comma = true
-
-[tool.pyright]
-typeCheckingMode = "strict"

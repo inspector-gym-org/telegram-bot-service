@@ -28,7 +28,7 @@ async def notify_individual_plan(
         f"*Сума:* _{training_plan.price:.2f} грн_\n"
         f"*План:* [Notion-сторінка]({training_plan.url})\n"
         "*Користувач:* [Telegram-профіль]"
-        f"(tg://user?id={user.id})"  # pyright: ignore [reportOptionalMemberAccess]
+        f"(tg://user?id={user.id})"  # type: ignore [union-attr]
     )
 
     reply_markup = InlineKeyboardMarkup(
@@ -44,7 +44,9 @@ async def notify_individual_plan(
         ]
     )
 
-    message_ids = {}
+    # str | bytes makes message_ids compatible
+    # with mapping parameter in hset function
+    message_ids: dict[str | bytes, int] = {}
 
     for admin_chat_id in settings.bot_admin_chat_ids:
         try:
