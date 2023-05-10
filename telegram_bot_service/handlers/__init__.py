@@ -1,3 +1,5 @@
+# mypy: disable-error-code="union-attr"
+
 # pyright: reportOptionalMemberAccess=false
 
 

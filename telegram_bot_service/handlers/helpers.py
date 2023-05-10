@@ -1,8 +1,10 @@
+# mypy: disable-error-code="union-attr"
+
 # pyright: reportOptionalMemberAccess=false
 
 from functools import wraps
 from logging import getLogger
-from typing import Any, Callable, Coroutine, cast
+from typing import Any, Awaitable, Callable, Coroutine, TypeVar, cast
 
 from telegram import KeyboardButton, ReplyKeyboardMarkup, Update
 from telegram import User as TelegramUser
@@ -14,15 +16,16 @@ from ..language import get_user_translation_function
 from ..user import User, create_user
 
 logger = getLogger("service")
+RT = TypeVar("RT")
 
 
 def log_update_data(
-    wrapped: Callable[..., Any]
-) -> Callable[..., Coroutine[Any, Any, Any]]:
+    wrapped: Callable[..., Awaitable[RT]]
+) -> Callable[..., Coroutine[Any, Any, RT]]:
     @wraps(wrapped)
     async def wrapper(
         update: Update, context: ContextTypes.DEFAULT_TYPE, *args: Any, **kwargs: Any
-    ) -> Coroutine[Any, Any, Any]:
+    ) -> RT:
         logger.debug(f"{wrapped.__name__} update: {update}")
         logger.debug(f"{wrapped.__name__} user_data: {context.user_data}")
 
@@ -36,12 +39,10 @@ def log_update_data(
 
 
 def authenticate_user(
-    wrapped: Callable[..., Any]
-) -> Callable[..., Coroutine[Any, Any, Any]]:
+    wrapped: Callable[..., Awaitable[RT]]
+) -> Callable[..., Coroutine[Any, Any, RT]]:
     @wraps(wrapped)
-    async def wrapper(
-        update: Update, *args: Any, **kwargs: Any
-    ) -> Coroutine[Any, Any, Any]:
+    async def wrapper(update: Update, *args: Any, **kwargs: Any) -> RT:
         telegram_user = cast(TelegramUser, update.effective_user)
 
         user = User(
@@ -59,12 +60,10 @@ def authenticate_user(
 
 
 def require_admin(
-    wrapped: Callable[..., Any]
-) -> Callable[..., Coroutine[Any, Any, Any]]:
+    wrapped: Callable[..., Awaitable[RT]]
+) -> Callable[..., Coroutine[Any, Any, RT]]:
     @wraps(wrapped)
-    async def wrapper(
-        update: Update, *args: Any, **kwargs: Any
-    ) -> Coroutine[Any, Any, Any]:
+    async def wrapper(update: Update, *args: Any, **kwargs: Any) -> RT:
         user_id = update.effective_user.id
         if user_id not in settings.bot_admin_chat_ids:
             raise PermissionError(f"User {user_id} is not admin")
@@ -75,12 +74,10 @@ def require_admin(
 
 
 def send_typing_action(
-    wrapped: Callable[..., Any]
-) -> Callable[..., Coroutine[Any, Any, Any]]:
+    wrapped: Callable[..., Awaitable[RT]]
+) -> Callable[..., Coroutine[Any, Any, RT]]:
     @wraps(wrapped)
-    async def wrapper(
-        update: Update, *args: Any, **kwargs: Any
-    ) -> Coroutine[Any, Any, Any]:
+    async def wrapper(update: Update, *args: Any, **kwargs: Any) -> RT:
         await update.effective_message.reply_chat_action(ChatAction.TYPING)
 
         return await wrapped(update=update, *args, **kwargs)
@@ -89,12 +86,10 @@ def send_typing_action(
 
 
 def get_translations(
-    wrapped: Callable[..., Any]
-) -> Callable[..., Coroutine[Any, Any, Any]]:
+    wrapped: Callable[..., Awaitable[RT]]
+) -> Callable[..., Coroutine[Any, Any, RT]]:
     @wraps(wrapped)
-    async def wrapper(
-        update: Update, *args: Any, **kwargs: Any
-    ) -> Coroutine[Any, Any, Any]:
+    async def wrapper(update: Update, *args: Any, **kwargs: Any) -> RT:
         kwargs["translate"] = get_user_translation_function(update.effective_user.id)
 
         return await wrapped(update=update, *args, **kwargs)

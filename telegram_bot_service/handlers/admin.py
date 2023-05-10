@@ -1,3 +1,5 @@
+# mypy: disable-error-code="union-attr"
+
 # pyright: reportOptionalMemberAccess=false
 
 from logging import getLogger
@@ -59,9 +61,7 @@ async def update_payment_button(
 
     if status == PaymentStatus.ACCEPTED:
         training_plan = await get_training_plan(
-            (
-                payment.items[0]
-            ).training_plan_id  # pyright: ignore [reportGeneralTypeIssues]
+            (payment.items[0]).training_plan_id  # type: ignore [arg-type]
         )
 
         try:

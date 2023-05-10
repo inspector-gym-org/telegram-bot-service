@@ -9,13 +9,11 @@ repos:
     rev: "v0.0.265"
     hooks:
       - id: ruff
-  - repo: local
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.2.0
     hooks:
-      - id: pyright
-        name: pyright
-        entry: poetry run pyright
-        language: system
-        types: [python]
+      - id: mypy
+        additional_dependencies: ["types-requests", "types-redis"]
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.3.1
     hooks:
