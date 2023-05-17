@@ -319,6 +319,7 @@ async def ask_level(
     update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
     context.user_data["filters"]["level"] = None
+    context.user_data["filters"]["frequency"] = None
 
     available_values = await get_property_values(Level, context.user_data["filters"])
 
@@ -444,7 +445,7 @@ async def save_payment_screenshot(
     text = update.effective_message.text
 
     if text == translate("previous_question"):
-        return await ask_frequency(update=update, context=context, translate=translate)
+        return await ask_level(update=update, context=context, translate=translate)
 
     if not update.message.photo:
         await update.effective_message.reply_text(translate("payment_not_screenshot"))
