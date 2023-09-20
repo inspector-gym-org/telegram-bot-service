@@ -43,7 +43,7 @@ class Frequency(Enum):
 class Environment(Enum):
     __order__ = "GYM HOUSE_AND_STREET"
 
-    GYM = "Спортзал"
+    GYM = "Тренажерний зал"
     HOUSE_AND_STREET = "Дім + вулиця"
 
 
