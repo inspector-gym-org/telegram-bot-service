@@ -20,6 +20,8 @@ from .equipment_shop import send_equipment_shop_data
 from .error_handler import error_handler
 from .helpers import get_translations, log_update_data
 from .main_menu import send_main_menu
+from .music_playlists import send_music_playlists
+from .social_networks import send_social_network_links
 from .training_plan import (
     ask_sex,
     handle_health_condition,
@@ -46,16 +48,22 @@ async def handle_menu_button(
             update=update, context=context, translate=translate
         )
 
-    elif response == translate("ready_made_plans_button"):
-        await update.effective_message.reply_text(translate("coming_soon"))
-        return MenuState.MAIN_MENU
-
-    elif response == translate("educational_plan_button"):
-        await update.effective_message.reply_text(translate("coming_soon"))
-        return MenuState.MAIN_MENU
-
     elif response == translate("equipment_shop_button"):
         return await send_equipment_shop_data(
+            update=update, context=context, translate=translate
+        )
+
+    elif response == translate("meal_plans_button"):
+        await update.effective_message.reply_text(translate("coming_soon"))
+        return MenuState.MAIN_MENU
+
+    elif response == translate("social_networks_button"):
+        return await send_social_network_links(
+            update=update, context=context, translate=translate
+        )
+
+    elif response == translate("music_playlists_button"):
+        return await send_music_playlists(
             update=update, context=context, translate=translate
         )
 
