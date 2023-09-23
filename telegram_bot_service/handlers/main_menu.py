@@ -10,19 +10,22 @@ from ..user import User
 from .constants import MenuState
 from .helpers import (
     authenticate_user,
-    get_reply_keyboard,
+    get_auto_reply_keyboard,
     get_translations,
     log_update_data,
 )
 
 
 def get_main_menu(translate: Translate) -> ReplyKeyboardMarkup:
-    return get_reply_keyboard(
+    return get_auto_reply_keyboard(
         [
             KeyboardButton(translate("individual_training_plan_button")),
-            KeyboardButton(translate("ready_made_plans_button")),
-            KeyboardButton(translate("educational_plan_button")),
             KeyboardButton(translate("equipment_shop_button")),
+            KeyboardButton(translate("meal_plans_button")),
+        ],
+        additional_row=[
+            KeyboardButton(translate("social_networks_button")),
+            KeyboardButton(translate("music_playlists_button")),
         ],
         placeholder=translate("main_menu_placeholder"),
         one_time=False,
@@ -36,8 +39,9 @@ def get_main_menu(translate: Translate) -> ReplyKeyboardMarkup:
 async def send_main_menu(
     update: Update, context: ContextTypes.DEFAULT_TYPE, user: User, translate: Translate
 ) -> MenuState:
+    await update.effective_message.reply_text(translate("main_menu_greeting"))
     await update.effective_message.reply_text(
-        translate("main_menu"), reply_markup=get_main_menu(translate)
+        translate("main_menu_description"), reply_markup=get_main_menu(translate)
     )
 
     context.user_data.clear()

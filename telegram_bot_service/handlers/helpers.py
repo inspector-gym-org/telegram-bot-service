@@ -98,6 +98,20 @@ def get_translations(
 
 
 def get_reply_keyboard(
+    keyboard: list[list[KeyboardButton]],
+    resize: bool = True,
+    one_time: bool = True,
+    placeholder: str = "",
+) -> ReplyKeyboardMarkup:
+    return ReplyKeyboardMarkup(
+        keyboard=keyboard,
+        resize_keyboard=resize,
+        one_time_keyboard=one_time,
+        input_field_placeholder=placeholder,
+    )
+
+
+def get_auto_reply_keyboard(
     keys: list[KeyboardButton],
     keys_per_row: int = 2,
     resize: bool = True,
@@ -113,9 +127,6 @@ def get_reply_keyboard(
     if additional_row:
         keyboard.append(additional_row)
 
-    return ReplyKeyboardMarkup(
-        keyboard=keyboard,
-        resize_keyboard=resize,
-        one_time_keyboard=one_time,
-        input_field_placeholder=placeholder,
+    return get_reply_keyboard(
+        keyboard=keyboard, resize=resize, one_time=one_time, placeholder=placeholder
     )

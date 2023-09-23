@@ -24,7 +24,7 @@ from ..types import Translate
 from .constants import MenuState
 from .equipment_shop import get_equipment_shop_keyboard
 from .helpers import (
-    get_reply_keyboard,
+    get_auto_reply_keyboard,
     get_translations,
     log_update_data,
     send_typing_action,
@@ -51,13 +51,13 @@ def get_filter_reply_keyboard(
     filter_enum_type: type[FilterEnum],
     available_values: list[FilterEnum],
 ) -> ReplyKeyboardMarkup:
-    return get_reply_keyboard(
+    return get_auto_reply_keyboard(
         [
             KeyboardButton(translate(get_button_string_id_from_filter_enum(property)))
             for property in filter_enum_type
             if property in available_values
         ],
-        additional_row=[KeyboardButton(translate("previous_question"))],
+        additional_row=[KeyboardButton(translate("previous_question_button"))],
     )
 
 
@@ -76,8 +76,17 @@ async def start_training_plan_survey(
     update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
     await update.effective_message.reply_text(
+        translate("individual_training_plan_price")
+    )
+    await update.effective_message.reply_text(
         translate("individual_training_plan_description"),
-        reply_markup=get_reply_keyboard([KeyboardButton(translate("start_button"))]),
+        reply_markup=get_auto_reply_keyboard(
+            [
+                KeyboardButton(translate("start_button")),
+                KeyboardButton(translate("previous_question_button")),
+            ],
+            keys_per_row=1,
+        ),
     )
 
     context.user_data["filters"] = {}
@@ -90,6 +99,9 @@ async def start_training_plan_survey(
 async def ask_sex(
     update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
+    if update.effective_message.text == translate("previous_question_button"):
+        return await send_main_menu(update=update, context=context)
+
     context.user_data["filters"]["sex"] = None
 
     available_values = await get_property_values(Sex, context.user_data["filters"])
@@ -110,7 +122,7 @@ async def save_sex(
 ) -> MenuState:
     choice = update.effective_message.text
 
-    if choice == translate("previous_question"):
+    if choice == translate("previous_question_button"):
         return await send_main_menu(update=update, context=context)
 
     if result := verify_filter_reply_keyboard_choice(translate, Sex, choice):
@@ -132,14 +144,14 @@ async def ask_age_group(
 
     await update.effective_message.reply_text(
         translate("age_group_description"),
-        reply_markup=get_reply_keyboard(
+        reply_markup=get_auto_reply_keyboard(
             [
                 KeyboardButton(translate("age_group_under_20_button")),
                 KeyboardButton(translate("age_group_under_30_button")),
                 KeyboardButton(translate("age_group_under_40_button")),
                 KeyboardButton(translate("age_group_above_40_button")),
             ],
-            additional_row=[KeyboardButton(translate("previous_question"))],
+            additional_row=[KeyboardButton(translate("previous_question_button"))],
             keys_per_row=1,
         ),
     )
@@ -154,7 +166,7 @@ async def save_age_group(
 ) -> MenuState:
     choice = update.effective_message.text
 
-    if choice == translate("previous_question"):
+    if choice == translate("previous_question_button"):
         return await ask_sex(update=update, context=context)
 
     if choice == translate("age_group_under_20_button"):
@@ -185,12 +197,12 @@ async def ask_health_condition(
 ) -> MenuState:
     await update.effective_message.reply_text(
         translate("health_condition_description"),
-        reply_markup=get_reply_keyboard(
+        reply_markup=get_auto_reply_keyboard(
             [
                 KeyboardButton(translate("health_condition_positive")),
                 KeyboardButton(translate("health_condition_negative")),
             ],
-            additional_row=[KeyboardButton(translate("previous_question"))],
+            additional_row=[KeyboardButton(translate("previous_question_button"))],
         ),
     )
 
@@ -204,7 +216,7 @@ async def handle_health_condition(
 ) -> MenuState:
     choice = update.effective_message.text
 
-    if choice == translate("previous_question"):
+    if choice == translate("previous_question_button"):
         return await ask_age_group(update=update, context=context, translate=translate)
 
     if choice == translate("health_condition_positive"):
@@ -250,7 +262,7 @@ async def save_goal(
 ) -> MenuState:
     choice = update.effective_message.text
 
-    if choice == translate("previous_question"):
+    if choice == translate("previous_question_button"):
         return await ask_health_condition(
             update=update, context=context, translate=translate
         )
@@ -294,7 +306,7 @@ async def save_environment(
 ) -> MenuState:
     choice = update.effective_message.text
 
-    if choice == translate("previous_question"):
+    if choice == translate("previous_question_button"):
         return await ask_goal(update=update, context=context, translate=translate)
 
     if result := verify_filter_reply_keyboard_choice(translate, Environment, choice):
@@ -338,7 +350,7 @@ async def save_level(
 ) -> MenuState:
     choice = update.effective_message.text
 
-    if choice == translate("previous_question"):
+    if choice == translate("previous_question_button"):
         return await ask_environment(
             update=update, context=context, translate=translate
         )
@@ -385,7 +397,7 @@ async def save_frequency(
 ) -> MenuState:
     choice = update.effective_message.text
 
-    if choice == translate("previous_question"):
+    if choice == translate("previous_question_button"):
         return await ask_level(update=update, context=context, translate=translate)
 
     if result := verify_filter_reply_keyboard_choice(translate, Frequency, choice):
@@ -426,8 +438,8 @@ async def send_payment_data(
         translate("payment_training_plan_description").format(
             price=training_plan.price
         ),
-        reply_markup=get_reply_keyboard(
-            [KeyboardButton(translate("previous_question"))]
+        reply_markup=get_auto_reply_keyboard(
+            [KeyboardButton(translate("previous_question_button"))]
         ),
     )
 
@@ -444,7 +456,7 @@ async def save_payment_screenshot(
 ) -> MenuState:
     text = update.effective_message.text
 
-    if text == translate("previous_question"):
+    if text == translate("previous_question_button"):
         return await ask_level(update=update, context=context, translate=translate)
 
     if not update.message.photo:

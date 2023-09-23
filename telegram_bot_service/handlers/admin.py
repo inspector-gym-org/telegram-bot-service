@@ -72,7 +72,7 @@ async def update_payment_button(
                     [
                         [
                             InlineKeyboardButton(
-                                translate("training_plan_url"),
+                                translate("training_plan_url_button"),
                                 url=training_plan.content_url,
                             )
                         ]

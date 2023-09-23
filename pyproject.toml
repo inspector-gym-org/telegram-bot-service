@@ -4,14 +4,14 @@ version = "0.1.0"
 description = ""
 authors = ["Andrew Yatsura <andrewyazura203@gmail.com>"]
 readme = "README.md"
-packages = [{include = "telegram_bot_service"}]
+packages = [{ include = "telegram_bot_service" }]
 
 [tool.poetry.dependencies]
 python = "^3.11"
 fastapi = "^0.95.0"
-uvicorn = {extras = ["standard"], version = "^0.21.1"}
+uvicorn = { extras = ["standard"], version = "^0.21.1" }
 python-telegram-bot = "^20.2"
-redis = {extras = ["hiredis"], version = "^4.5.4"}
+redis = { extras = ["hiredis"], version = "^4.5.4" }
 
 
 [tool.poetry.group.dev.dependencies]
