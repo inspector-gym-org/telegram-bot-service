@@ -39,6 +39,22 @@ msgstr "🎵 Плейлисти для тренувань"
 
 
 
+# legacy buttons
+
+msgid "legacy_individual_training_plan_button"
+msgstr "Індивідуальний план тренувань 🏅"
+
+msgid "legacy_ready_made_plans_button"
+msgstr "Готові плани тренувань 💪"
+
+msgid "legacy_educational_plan_button"
+msgstr "Наукова робота 🧪"
+
+msgid "legacy_equipment_shop_button"
+msgstr "Спортивне спорядження 🛒"
+
+
+
 # equipment shop
 
 msgid "equipment_shop_description"
@@ -156,7 +172,7 @@ msgstr "Радий чути! 😀"
 msgid "health_condition_on_negative"
 msgstr ""
 "⛔ У такому разі тобі потрібно звернутися до спеціаліста, "
-"наприклад до Інспектора Жима: @INSPECTOR\\_GYM"
+"наприклад до @inspector\\_gym"
 
 
 # individual plan goal

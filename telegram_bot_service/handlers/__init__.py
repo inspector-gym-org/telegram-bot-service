@@ -14,11 +14,12 @@ from telegram.ext import (
 )
 
 from ..types import TelegramApplication, Translate
+from ..user import User
 from .admin import fetch_plans, handle_dummy_inline_button, update_payment_button
 from .constants import MenuState
 from .equipment_shop import send_equipment_shop_data
 from .error_handler import error_handler
-from .helpers import get_translations, log_update_data
+from .helpers import authenticate_user, get_translations, log_update_data
 from .main_menu import send_main_menu
 from .music_playlists import send_music_playlists
 from .social_networks import send_social_network_links
@@ -37,23 +38,33 @@ from .training_plan import (
 
 
 @log_update_data
+@authenticate_user
 @get_translations
 async def handle_menu_button(
-    update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
+    update: Update, context: ContextTypes.DEFAULT_TYPE, user: User, translate: Translate
 ) -> MenuState:
     response = update.effective_message.text
 
-    if response == translate("individual_training_plan_button"):
+    if response in (
+        translate("individual_training_plan_button"),
+        translate("legacy_individual_training_plan_button"),
+    ):
         return await start_training_plan_survey(
             update=update, context=context, translate=translate
         )
 
-    elif response == translate("equipment_shop_button"):
+    elif response in (
+        translate("equipment_shop_button"),
+        translate("legacy_equipment_shop_button"),
+    ):
         return await send_equipment_shop_data(
             update=update, context=context, translate=translate
         )
 
-    elif response == translate("meal_plans_button"):
+    elif response in (
+        translate("meal_plans_button"),
+        translate("legacy_educational_plan_button"),
+    ):
         await update.effective_message.reply_text(translate("coming_soon"))
         return MenuState.MAIN_MENU
 
@@ -65,6 +76,11 @@ async def handle_menu_button(
     elif response == translate("music_playlists_button"):
         return await send_music_playlists(
             update=update, context=context, translate=translate
+        )
+
+    elif response == translate("previous_question_button"):
+        return await send_main_menu(
+            update=update, context=context, user=user, translate=translate
         )
 
     return MenuState.MAIN_MENU
