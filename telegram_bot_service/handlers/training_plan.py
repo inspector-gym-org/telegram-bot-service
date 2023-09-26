@@ -100,7 +100,14 @@ async def ask_sex(
     update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
     if update.effective_message.text == translate("previous_question_button"):
-        return await send_main_menu(update=update, context=context)
+        try:
+            # if this key was already initialized,
+            # the back button was pressed on AGE_GROUP state
+            context.user_data["filters"]["age_group"]
+        except KeyError:
+            # if not, the back button was pressed on
+            # INDIVIDUAL_PLAN_START state
+            return await send_main_menu(update=update, context=context)
 
     context.user_data["filters"]["sex"] = None
 
@@ -140,7 +147,7 @@ async def save_sex(
 async def ask_age_group(
     update: Update, context: ContextTypes.DEFAULT_TYPE, translate: Translate
 ) -> MenuState:
-    context.user_data["age_group"] = None
+    context.user_data["filters"]["age_group"] = None
 
     await update.effective_message.reply_text(
         translate("age_group_description"),
