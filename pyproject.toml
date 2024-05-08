@@ -23,7 +23,7 @@ types-redis = "^4.5.5.0"
 
 
 [tool.poetry.group.prod.dependencies]
-gunicorn = "^20.1.0"
+gunicorn = "^22.0.0"
 
 [build-system]
 requires = ["poetry-core"]
